@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SmartBandAlertV6.Pages.GPStestPage">
+
+    <StackLayout>
+        <Button Text="Test" VerticalOptions="Center" HorizontalOptions="Center" Clicked="Button_OnClicked"/>
+
+        <Label x:Name="labelGPS"   VerticalOptions="Center" HorizontalOptions="Center"/>
+        <Label x:Name="labelCity"   VerticalOptions="Center" HorizontalOptions="Center"/>
+
+        <Label x:Name="labelrssi"   VerticalOptions="Center" HorizontalOptions="Center"/>
+
+        <StackLayout>
+            <Button Text="Send Alarm" VerticalOptions="Center" HorizontalOptions="Center" Clicked="ButtonAlarm_OnClicked"/>
+
+        </StackLayout>
+
+    </StackLayout>
+
+
+</ContentPage>

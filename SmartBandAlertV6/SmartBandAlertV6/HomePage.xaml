@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SmartBandAlertV6.HomePage"
+             Title="HomePage">
+
+
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem x:Name="ScanText"  Text="Scan" Clicked="Button_OnClickedScanToggle" Order="Primary" />
+    </ContentPage.ToolbarItems>
+
+
+    <ContentPage.Content>
+
+
+
+        <StackLayout>
+            <Label  Text="Connected Device:"   />
+            <Label  x:Name="Systconnocted"   />
+            <Label  x:Name="SyststateL"   />
+
+            <ListView  x:Name="Devicesl"  ItemSelected="SelectDevice" RowHeight="160" HasUnevenRows="True">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+
+                            <ViewCell.ContextActions>
+                                <MenuItem Clicked="ConnectAndDisposeDevice"
+                          CommandParameter="{Binding .}"
+                          Text="Connect and Dispose"/>
+                                <MenuItem
+                         CommandParameter="{Binding .}" IsDestructive="True"
+                         Text="Disconnect"/>
+
+                            </ViewCell.ContextActions>
+
+
+
+                            <ViewCell.View>
+
+                                <Grid>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="30" />
+
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition Height="30" />
+
+                                    </Grid.RowDefinitions>
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <!--
+                  <Button Clicked="checkservice" Text="Checkservevice" Grid.Row="1" Grid.Column="0"/>
+                  <Button Clicked="checkchar" Text="Checkchar" Grid.Row="2" Grid.Column="0"/>
+                  <Button Clicked="choosechar" Text="Choosechar" Grid.Row="3" Grid.Column="0"/>
+-->
+                                    <Label Text="{Binding Name}" Grid.Row="0" Grid.Column="0" FontAttributes="Bold" FontSize="15" />
+                                    <Label Text="{Binding Rssi, StringFormat='RSSI: {0}'}" Grid.Row="0" Grid.Column="1" TextColor="Red" />
+                                    <Label Text="{Binding Id, StringFormat='{0}'}" Grid.Row="1" Grid.ColumnSpan="2" FontAttributes="Italic" />
+                                    <Label Text="{Binding IsConnected, StringFormat='Device Connected: {0}'}" Grid.Row="2" Grid.Column="0" TextColor="Red" />
+
+
+                                    <Label  Text="Device Connected" IsVisible="{Binding IsConnected}" BackgroundColor="Yellow" TextColor="Black"  
+                          HorizontalTextAlignment="Center" Grid.ColumnSpan="2" Grid.Row="4" />
+
+
+                                </Grid>
+                            </ViewCell.View>
+                        </ViewCell>
+
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <ActivityIndicator IsRunning="{Binding IsScanning}" />
+            <Button Text="Start Long Running Task" x:Name="longRunningTask" />
+            <Button Text="Stop Long Running Task" x:Name="stopLongRunningTask" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

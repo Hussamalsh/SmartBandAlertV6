@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SmartBandAlertV6.Pages.LoginPage"
+              
+             xmlns:local="clr-namespace:SmartBandAlertV6;assembly=SmartBandAlertV6"
+
+             >
+
+
+    <StackLayout VerticalOptions="Center">
+
+        <Button Text="FaceBook"
+            Clicked="OnLoginButtonClicked"
+            TextColor="White"
+            BackgroundColor="#01579B"
+            Font="Bold"
+            FontSize="26" />
+
+        <Button Text="Google"  Clicked="OnLoginButtonClicked" Image="GOOGLE.png" HeightRequest="50"/>
+
+        <Label x:Name="messageLabel" />
+
+
+    </StackLayout>
+    
+    
+</ContentPage>
