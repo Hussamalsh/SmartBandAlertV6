@@ -75,8 +75,6 @@ namespace SmartBandAlertV6
 
         }
 
-
-
         public void SaveProfile()
         {
             _profile.FBusername = FacebookName;
