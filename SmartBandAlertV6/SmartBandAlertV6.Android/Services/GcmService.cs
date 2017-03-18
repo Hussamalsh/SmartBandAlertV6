@@ -32,11 +32,17 @@ namespace SmartBandAlertV6.Droid.Services
     [Service]
     public class GcmService : GcmServiceBase
     {
+        public MediaPlayer _player;
+
         public static string RegistrationToken { get; private set; }
 
         public GcmService() : base(PushHandlerBroadcastReceiver.SENDER_IDS) { }
         protected override void OnRegistered(Context context, string registrationToken)
         {
+
+            _player = MediaPlayer.Create(this, Resource.Raw.siren2);
+
+
             Log.Verbose("PushHandlerBroadcastReceiver", "GCM Registered: " + registrationToken);
             RegistrationToken = registrationToken;
 
@@ -46,6 +52,7 @@ namespace SmartBandAlertV6.Droid.Services
 
         protected override void OnUnRegistered(Context context, string registrationToken)
         {
+            //_player.Stop();
             Log.Error("PushHandlerBroadcastReceiver", "Unregistered RegisterationToken: " + registrationToken);
         }
 
@@ -101,8 +108,9 @@ namespace SmartBandAlertV6.Droid.Services
                 App.NotificationOn = true;
                 //string tobesearched = "ID = ";
                 App.VictimId = message.Split(new[] { "ID =" }, StringSplitOptions.None)[1];
-                //message.Substring(message.IndexOf(tobesearched) + tobesearched.Length);//message.("ID ="); ;
-                MainActivity._player.Start();
+                //message.Substring(message.IndexOf(tobesearched) + tobesearched.Length);//message.("ID ="); 
+                _player = MediaPlayer.Create(this, Resource.Raw.siren2);
+                _player.Start();
             }
         }
 

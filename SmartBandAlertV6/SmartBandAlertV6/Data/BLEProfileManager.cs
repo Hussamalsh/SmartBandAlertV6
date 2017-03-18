@@ -32,14 +32,19 @@ namespace SmartBandAlertV6.Data
 
         public BLEProfileManager()
         {
-            bleprofile.ble = CrossBluetoothLE.Current;
-            bleprofile.Adapter = CrossBluetoothLE.Current.Adapter;
-            bleprofile.Adapter.DeviceDiscovered += OnDeviceDiscovered;
-            bleprofile.Adapter.StartScanningForDevicesAsync();
 
         }
 
 
+
+       public void init()
+        {
+            bleprofile.ble = CrossBluetoothLE.Current;
+            bleprofile.Adapter = CrossBluetoothLE.Current.Adapter;
+
+            bleprofile.Adapter.DeviceDiscovered += OnDeviceDiscovered;
+            bleprofile.Adapter.StartScanningForDevicesAsync();
+        }
 
 
         public async void ScanForDevices()
@@ -93,7 +98,7 @@ namespace SmartBandAlertV6.Data
 
             //this.Devicesl.ItemsSource = this.Devices;
 
-            if (bleprofile.Devices.Count != 0)
+           /* if (bleprofile.Devices.Count != 0)
             {
                 string s = bleprofile.Devices.FirstOrDefault().Device.State.ToString();
                 if (s.Equals("Disconnected"))
@@ -101,7 +106,7 @@ namespace SmartBandAlertV6.Data
                     bleprofile.Adapter.ConnectToDeviceAsync(bleprofile.Devices.FirstOrDefault().Device);
                     checkservice();
                 }
-            }
+            }*/
 
         }
 

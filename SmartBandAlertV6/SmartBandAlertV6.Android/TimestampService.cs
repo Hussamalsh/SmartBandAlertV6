@@ -22,6 +22,7 @@ using System.ComponentModel;
 using Plugin.BLE.Abstractions.EventArgs;
 using Plugin.BLE.Abstractions.Contracts;
 using Plugin.BLE.Abstractions.Extensions;
+using Android.Media;
 
 namespace SmartBandAlertV6.Droid
 {
@@ -33,6 +34,8 @@ namespace SmartBandAlertV6.Droid
 	[Service]
     public class TimestampService : Service
     {
+
+
         static readonly string TAG = typeof(TimestampService).FullName;
 
         //UtcTimestamper timestamper;
@@ -93,11 +96,11 @@ namespace SmartBandAlertV6.Droid
                 }
                 else
                 {
-
                     viktem = new Victim();
-                    var ble = CrossBluetoothLE.Current;
-                    Adapter = CrossBluetoothLE.Current.Adapter;
-                    if (Adapter.ConnectedDevices.Count == 0)
+                    //var ble = CrossBluetoothLE.Current;
+                    //Adapter = CrossBluetoothLE.Current.Adapter;
+                    Adapter = App.BLEProfileManager.bleprofile.Adapter;
+                    /*if (Adapter.ConnectedDevices.Count == 0)
                     {
                         Adapter.DeviceDiscovered += OnDeviceDiscovered;
                         Adapter.StartScanningForDevicesAsync();
@@ -109,9 +112,10 @@ namespace SmartBandAlertV6.Droid
                         foreach (var item in Adapter.ConnectedDevices)
                             Devices.Add(new DeviceListItemViewModel(item));
 
-
+                       */
+                    Devices = App.BLEProfileManager.bleprofile.Devices;
                         checkservice();
-                    }
+                    //}
 
                     Log.Info(TAG, "OnStartCommand: The service is starting.");
                     RegisterForegroundService();
@@ -289,7 +293,7 @@ namespace SmartBandAlertV6.Droid
         public IList<IService> Services { get; private set; }
         async void checkservice()
         {
-            foreach (DeviceListItemViewModel item in Devices)
+            /*foreach (DeviceListItemViewModel item in Devices)
                 if (item.Name != null)
                 {
                     if (item.Name.Equals("SmartBandAlert"))
@@ -309,6 +313,18 @@ namespace SmartBandAlertV6.Droid
 
                     }
                 }
+                */
+
+            IDevice d = Devices.FirstOrDefault().Device;
+            Adapter.ConnectToDeviceAsync(d);
+
+            Services = await d.GetServicesAsync();
+            while (Services.Count == 0)
+            {
+                Services = await d.GetServicesAsync();
+            }
+
+            checkchar();
 
         }
         private IList<ICharacteristic> _characteristics;
@@ -345,7 +361,7 @@ namespace SmartBandAlertV6.Droid
             foreach (ICharacteristic item in Characteristics)
                 if (item.Name != null)
                 {
-                    if (item.Uuid.Equals("2d30c082-f39f-4ce6-923f-3484ea480596"))
+                    if (item.Uuid.Equals("6e400003-b5a3-f393-e0a9-e50e24dcca9e"))
                     {
                         CharacteristicT = item;
                         StartUpdates();

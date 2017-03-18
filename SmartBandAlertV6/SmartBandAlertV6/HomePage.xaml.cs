@@ -20,14 +20,30 @@ namespace SmartBandAlertV6
         public BLEProfileManager BLEProfileManager;
         public HomePage()
         {
-            BLEProfileManager = new BLEProfileManager();
+            BLEProfileManager = App.BLEProfileManager;
             InitializeComponent();
 
-
-
             longRunningTask.Clicked += (s, e) => {
-                var message = new StartLongRunningTaskMessage();
-                MessagingCenter.Send(message, "StartLongRunningTaskMessage");
+
+                if (BLEProfileManager.bleprofile.Devices.Count != 0)
+                {
+
+                    string status = BLEProfileManager.bleprofile.Devices.FirstOrDefault().Device.State.ToString();
+                    if (status.Equals("Disconnected"))
+                    {
+                        DisplayAlert("No BlueTooth ", "You need to connect to SmartBand Alert first", "Ok");
+
+                    }
+                    else
+                    {
+                        var message = new StartLongRunningTaskMessage();
+                        MessagingCenter.Send(message, "StartLongRunningTaskMessage");
+                    }
+
+                }else
+                    DisplayAlert("No BlueTooth ", "You need to connect to SmartBand Alert first", "Ok");
+
+
             };
 
             stopLongRunningTask.Clicked += (s, e) => {
@@ -43,41 +59,71 @@ namespace SmartBandAlertV6
             base.OnAppearing();
             OnAlertYesNoClicked();
 
-            GetSystemConnectedOrPairedDevices();
-
+            //GetSystemConnectedOrPairedDevices();
+            if (BLEProfileManager.bleprofile.Devices.Count != 0)
+                this.Devicesl.ItemsSource = BLEProfileManager.bleprofile.Devices;
 
         }
 
 
         IDisposable scan;
         //public bool IsScanning { get; private set; }
+        bool firsttime = true;
 
-        void Button_OnClickedScanToggle(Object obj, EventArgs e)
+        async void Button_OnClickedScanToggle(Object obj, EventArgs e)
         {
+            if (firsttime && BLEProfileManager.bleprofile.Devices.Count == 0)
+            {
+                BLEProfileManager.init();
+                firsttime = false;
+            }
+
+
+            Task.Delay(3000);
             if (BLEProfileManager.bleprofile.IsScanning)
             {
                 this.scan?.Dispose();
-                BLEProfileManager.bleprofile.Adapter.StopScanningForDevicesAsync();
-                this.ScanText.Text = BLEProfileManager.bleprofile.Adapter.IsScanning ? "Scan" : "Stop Scan";
+                //BLEProfileManager.bleprofile.Adapter.StopScanningForDevicesAsync();
+                this.ScanText.Text = BLEProfileManager.bleprofile.Adapter.IsScanning ? "Stop Scan" : "Scan";
+                //this.Devicesl.ItemsSource = BLEProfileManager.bleprofile.Devices;
+                int counterscan = 0;
+                while (BLEProfileManager.bleprofile.IsScanning)
+                {
+                    //DisplayAlert("Question?", "Do you have Smartband Alert product?", "Yes", "No");
+                    var answer = await DisplayAlert("Wait Please", "Looking for SmartBand Alert", "Ok", ""+counterscan++);
+
+                    if (BLEProfileManager.bleprofile.Devices.Count != 0)
+                    {
+                        this.Devicesl.ItemsSource = BLEProfileManager.bleprofile.Devices;
+                        this.ScanText.Text = BLEProfileManager.bleprofile.Adapter.IsScanning ? "Stop Scan" : "Scan";
+
+                    }
+
+                }
+
             }
             else
             {
-                this.ScanText.Text = "Stop Scan";
-                BLEProfileManager.ScanForDevices();
+                this.ScanText.Text = BLEProfileManager.bleprofile.Adapter.IsScanning ? "Stop Scan" : "Scan";
+                //BLEProfileManager.ScanForDevices();
                 if (BLEProfileManager.bleprofile.Devices.Count != 0)
                 {
                     this.Devicesl.ItemsSource = BLEProfileManager.bleprofile.Devices;
 
-                    string s = BLEProfileManager.bleprofile.Devices.FirstOrDefault().Device.State.ToString();
+                    /*string s = BLEProfileManager.bleprofile.Devices.FirstOrDefault().Device.State.ToString();
                     if (s.Equals("Disconnected"))
                     {
                         BLEProfileManager.bleprofile.Adapter.ConnectToDeviceAsync(BLEProfileManager.bleprofile.Devices.FirstOrDefault().Device);
                     }
                     else
-                        this.SyststateL.Text = "Connected: " + BLEProfileManager.bleprofile.Devices.FirstOrDefault().IsConnected.ToString();
+                        this.SyststateL.Text = "Connected: " + BLEProfileManager.bleprofile.Devices.FirstOrDefault().IsConnected.ToString();*/
                 }
                 else
+                {
                     this.SyststateL.Text = "Connected: Couldt Find";
+                    BLEProfileManager.init();
+                }
+
             }
         }
 
@@ -85,9 +131,6 @@ namespace SmartBandAlertV6
 
         void SelectDevice(object sender, SelectedItemChangedEventArgs e)
         {
-
-
-
 
         }
 
@@ -125,13 +168,18 @@ namespace SmartBandAlertV6
 
             }
 
-            this.Devicesl.ItemsSource = BLEProfileManager.bleprofile.Devices;
+            this.Devicesl.ItemsSource = null;
             DisplayAlert("Your connected to ", item.Device.Name, "Ok");
 
-            BLEProfileManager.ScanForDevices();
+            //BLEProfileManager.ScanForDevices();
 
             App.BlegUID = item.Device.Id.ToString();
             ((App)App.Current).SaveProfile();
+
+            this.Systconnocted.Text = "Device name: " + BLEProfileManager.bleprofile.Devices.FirstOrDefault().Device.Name;
+            this.SyststateL.Text = "Connected: " + BLEProfileManager.bleprofile.Devices.FirstOrDefault().IsConnected.ToString();
+
+            this.Devicesl.ItemsSource = BLEProfileManager.bleprofile.Devices;
 
 
         }

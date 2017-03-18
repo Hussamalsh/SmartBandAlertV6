@@ -40,6 +40,7 @@ namespace SmartBandAlertV6
         public static FriendsManager FriendsManager { get; private set; }
         public static VictimManager VictimManager { get; private set; }
 
+        public static BLEProfileManager BLEProfileManager { get; private set; }
 
 
         public App()
@@ -50,7 +51,7 @@ namespace SmartBandAlertV6
             FriendsManager = new FriendsManager(new RestService());
             VictimManager = new VictimManager(new RestService());
 
-            // BLEProfileManager = new BLEProfileManager();  //NEW ADDED
+             BLEProfileManager = new BLEProfileManager();  //NEW ADDED
 
 
             IProfileManager profileManager = new ProfileManager();
