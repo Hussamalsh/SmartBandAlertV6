@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartBandAlertV6", "SmartBa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartBandAlertV6.iOS", "SmartBandAlertV6\SmartBandAlertV6.iOS\SmartBandAlertV6.iOS.csproj", "{6CBBD904-3D7C-4F6D-92E3-C55D20310420}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backendt1", "..\Backendt1\Backendt1\Backendt1.csproj", "{F213B089-F034-4D2C-A1A8-78B388669159}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backendt1", "Backendt1\Backendt1.csproj", "{F213B089-F034-4D2C-A1A8-78B388669159}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
