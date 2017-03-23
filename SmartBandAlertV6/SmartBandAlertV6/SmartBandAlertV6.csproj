@@ -104,12 +104,12 @@
       <HintPath>..\..\packages\PCLCrypto.2.0.147\lib\portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10\PCLCrypto.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Plugin.BLE, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Plugin.BLE.1.2.0\lib\portable-net45+win8+wpa81+wp8\Plugin.BLE.dll</HintPath>
+    <Reference Include="Plugin.BLE, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Plugin.BLE.1.2.1\lib\portable-net45+win8+wpa81+wp8\Plugin.BLE.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Plugin.BLE.Abstractions, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Plugin.BLE.1.2.0\lib\portable-net45+win8+wpa81+wp8\Plugin.BLE.Abstractions.dll</HintPath>
+    <Reference Include="Plugin.BLE.Abstractions, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Plugin.BLE.1.2.1\lib\portable-net45+win8+wpa81+wp8\Plugin.BLE.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Plugin.Geolocator, Version=3.0.4.0, Culture=neutral, processorArchitecture=MSIL">

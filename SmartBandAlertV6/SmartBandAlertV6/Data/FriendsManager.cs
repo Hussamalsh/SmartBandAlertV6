@@ -32,10 +32,10 @@ namespace SmartBandAlertV6.Data
 
 
 
-        public Task SaveTaskAsync(User item, bool isNewItem = false)
+        public Task SaveTaskAsync(FriendsList item, bool isNewItem = false)
         {
 
-            return restService.SaveTodoItemAsync(item, isNewItem);
+            return restService.SaveTodoItemAsyncFriend(item, isNewItem);
 
         }
 

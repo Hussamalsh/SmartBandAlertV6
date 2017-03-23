@@ -74,6 +74,8 @@ namespace SmartBandAlertV6.Droid.Services
                 };
 
                 await push.RegisterAsync(RegistrationToken, templates);
+
+                saveset(RegistrationToken);
                 Log.Info("Push Installation Id", push.InstallationId.ToString());
             }
             catch (Exception ex)
@@ -107,6 +109,7 @@ namespace SmartBandAlertV6.Droid.Services
                 CreateNotification("New Test!", "SmartBandAlert: " + message);
                 App.NotificationOn = true;
                 //string tobesearched = "ID = ";
+                if(message.Contains("ID"))
                 App.VictimId = message.Split(new[] { "ID =" }, StringSplitOptions.None)[1];
                 //message.Substring(message.IndexOf(tobesearched) + tobesearched.Length);//message.("ID ="); 
                 _player = MediaPlayer.Create(this, Resource.Raw.siren2);
@@ -138,5 +141,18 @@ namespace SmartBandAlertV6.Droid.Services
             notificationManager.Notify(1, notification);
 
         }
+
+
+        protected void saveset(string id)
+        {
+
+            //store
+            var prefs = Android.App.Application.Context.GetSharedPreferences("MyApp", FileCreationMode.Private);
+            var prefEditor = prefs.Edit();
+            prefEditor.PutString("regId", id);
+            prefEditor.Commit();
+
+        }
+
     }
 }

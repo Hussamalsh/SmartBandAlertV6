@@ -17,7 +17,7 @@ namespace SmartBandAlertV6.Data
 
         Task <Victim> SearchVictimAsync(string text);
         Task<List<FriendsList>> RefreshDataAsyncFriends();
-
+        Task SaveTodoItemAsyncFriend(FriendsList item, bool isNewItem);
         Task SaveTodoItemAsync(User item, bool isNewItem);
 
         Task SaveVictimAsync(Victim item, bool isNewItem);

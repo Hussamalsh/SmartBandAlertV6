@@ -142,5 +142,28 @@ namespace SmartBandAlertV6.Data
 
             return victim;
         }
+
+        public async Task SaveTodoItemAsyncFriend(FriendsList item, bool isNewItem)
+        {
+            if (isNewItem)
+            {
+
+                var obj = JsonConvert.SerializeObject(item, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
+                var request = new HttpRequestMessage(HttpMethod.Post, "https://sbat1.azurewebsites.net/api/friends/");
+                request.Content = new StringContent(obj, Encoding.UTF8, "application/json");
+
+                var data = client.SendAsync(request).Result;
+
+            }
+            else
+            {
+
+                //response = await client.PutAsync(uri, content);
+
+            }
+        }
+
+
+
     }
 }
