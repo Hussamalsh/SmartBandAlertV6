@@ -47,6 +47,7 @@ namespace SmartBandAlertV6.Pages
             await CompleteItem(todo);
         }
 
+
         async Task CompleteItem(FriendsList item)
         {
 
@@ -56,6 +57,22 @@ namespace SmartBandAlertV6.Pages
             listView.ItemsSource = list;
         }
 
+        //OnCompleteAdd
+        public async void OnCompleteAdd(object sender, EventArgs e)
+        {
+            var mi = ((MenuItem)sender);
+            var todo = mi.CommandParameter as User;
+            FriendsList f = new FriendsList() { FriendFBID = todo.FBID, UserName = todo.UserName, ImgLink = todo.ImgLink, UserFBID = App.FacebookId };
+            await CompleteAdd(f);
+        }
+
+
+        async Task CompleteAdd(FriendsList item)
+        {
+            await App.FriendsManager.SaveTaskAsync(item,true);
+            var list = await App.FriendsManager.GetTasksAsync();
+            listView.ItemsSource = list;
+        }
         void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
 
         {

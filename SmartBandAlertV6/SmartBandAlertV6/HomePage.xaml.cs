@@ -1,4 +1,5 @@
-﻿using Plugin.BLE.Abstractions;
+﻿using Acr.UserDialogs;
+using Plugin.BLE.Abstractions;
 using SmartBandAlertV6.Data;
 using SmartBandAlertV6.Messages;
 using SmartBandAlertV6.Models;
@@ -65,6 +66,7 @@ namespace SmartBandAlertV6
 
         }
 
+        private readonly IUserDialogs _userDialogs;
 
         IDisposable scan;
         //public bool IsScanning { get; private set; }
@@ -86,11 +88,12 @@ namespace SmartBandAlertV6
                 //BLEProfileManager.bleprofile.Adapter.StopScanningForDevicesAsync();
                 this.ScanText.Text = BLEProfileManager.bleprofile.Adapter.IsScanning ? "Stop Scan" : "Scan";
                 //this.Devicesl.ItemsSource = BLEProfileManager.bleprofile.Devices;
-                int counterscan = 0;
+                var counterscan = 0;
                 while (BLEProfileManager.bleprofile.IsScanning)
                 {
                     //DisplayAlert("Question?", "Do you have Smartband Alert product?", "Yes", "No");
-                    var answer = await DisplayAlert("Wait Please", "Looking for SmartBand Alert", "Ok", ""+counterscan++);
+                     var answer = await DisplayAlert("Wait Please", "Looking for SmartBand Alert", "Ok", ""+counterscan++);
+                   // _userDialogs.ShowLoading($"Disconnect in {counterscan++}s...", MaskType.Black);
 
                     if (BLEProfileManager.bleprofile.Devices.Count != 0)
                     {

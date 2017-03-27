@@ -14,6 +14,7 @@ using Gcm.Client;
 using SmartBandAlertV6.Droid.Services;
 using Xamarin.Forms;
 using SmartBandAlertV6.Messages;
+using Acr.UserDialogs;
 
 namespace SmartBandAlertV6.Droid
 {
@@ -66,6 +67,9 @@ namespace SmartBandAlertV6.Droid
             var account = accounts.FirstOrDefault();
             if (account != null)
                 App.IsLoggedIn = true;
+
+
+            UserDialogs.Init(this);
 
             Microsoft.WindowsAzure.MobileServices.CurrentPlatform.Init();
             Xamarin.FormsMaps.Init(this, savedInstanceState);

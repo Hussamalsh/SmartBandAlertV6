@@ -7,7 +7,7 @@
 
     <StackLayout>
 
-        <SearchBar x:Name="MainSearchBar"
+        <SearchBar x:Name="MainSearchBar" HeightRequest="50"
                SearchButtonPressed="MainSearchBar_OnSearchButtonPressed"/>
 
 
@@ -19,6 +19,8 @@
 
                         <ViewCell.ContextActions>
                             <MenuItem Clicked="OnComplete" Text="Delete" CommandParameter="{Binding .}" />
+                            <MenuItem Clicked="OnCompleteAdd" Text="AddFriend" CommandParameter="{Binding .}" />
+
                         </ViewCell.ContextActions>
 
                         <StackLayout HorizontalOptions="StartAndExpand" Orientation="Horizontal" Padding="15,5,0,0">
