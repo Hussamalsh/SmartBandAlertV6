@@ -50,11 +50,33 @@ namespace SmartBandAlertV6
             masterPageItems.Add(new MasterPageItem
             {
 
+                Title = "Profile",
+
+                IconSource = "reminders.png",
+
+                TargetType = typeof(ProfilePage)
+
+            });
+
+            masterPageItems.Add(new MasterPageItem
+            {
+
                 Title = "GPSTest",
 
                 IconSource = "reminders.png",
 
                 TargetType = typeof(GPStestPage)
+
+            });
+
+            masterPageItems.Add(new MasterPageItem
+            {
+
+                Title = "Logout",
+
+                IconSource = "reminders.png",
+
+                TargetType = typeof(LogoutPage)
 
             });
 

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SmartBandAlertV6.Views.Hjalp"
+             
+             Title="Hjälp"
+             BackgroundColor="#FFFFFF"
+             >
+    <StackLayout Spacing="5" x:Name="layout">
+        <Label Text="" HorizontalOptions="Center" />
+        <Label XAlign="Center" Text="    • Konfigurera din profil" HorizontalOptions="Center" />
+        <Label XAlign="Center" Text="    • Lägg till beskyddare" HorizontalOptions="Center" />
+        <Label XAlign="Center" Text="    • Anslut till ditt armband" HorizontalOptions="Center" />
+        <Label XAlign="Center" Text="    • Starta farligt läge" HorizontalOptions="Center" />
+        <Image Source="sbalogo.png" HorizontalOptions="Center"/>
+    </StackLayout>
+</ContentPage>

@@ -13,6 +13,11 @@ namespace SmartBandAlertV6
     public partial class App : Application
     {
 
+        public static int ScreenWidth;
+        public static int ScreenHeight;
+        public static int ScreenDPI;
+
+
         #region Facebook Auth Settings
         public static string AppId = "386661445019743";
         public static string DisplayName = "SBA App";
@@ -42,6 +47,12 @@ namespace SmartBandAlertV6
 
         public static BLEProfileManager BLEProfileManager { get; private set; }
 
+        public static IAuthenticate Authenticator { get; private set; } //initialize the interface with a platform-specific implementation
+
+        public static void Init(IAuthenticate authenticator)
+        {
+            Authenticator = authenticator;
+        }
 
         public App()
         {
@@ -71,7 +82,7 @@ namespace SmartBandAlertV6
             }
             else
             {
-                MainPage = !IsLoggedIn ? (Page)new LoginPage() : new MainPage();
+                MainPage = !IsLoggedIn ? (Page)new LoginPage() : new MainPage1();
             }
 
         }
@@ -81,6 +92,7 @@ namespace SmartBandAlertV6
             _profile.FBusername = FacebookName;
             _profile.FBimage = ProfilePic;
             _profile.FBid = FacebookId;
+            _profile.FBemail = EmailAddress;
             _profile.HaveSmartBand = HaveSmartBand;
             _profile.BlegUID = BlegUID;
             _profileManager.SaveProfile(_profile);
@@ -89,6 +101,9 @@ namespace SmartBandAlertV6
         {
             _profile = _profileManager.LoadProfile();
             FacebookId = _profile.FBid;
+            FacebookName = _profile.FBusername;
+            ProfilePic = _profile.FBimage;
+            EmailAddress = _profile.FBemail;
             HaveSmartBand = _profile.HaveSmartBand;
             BlegUID = _profile.BlegUID;
         }

@@ -76,8 +76,8 @@ namespace SmartBandAlertV6.Pages
             victim.UserName = _profile.FBusername;
 
             victim.StartDate = DateTime.Parse(position.Timestamp.ToString("yyyy-MM-dd HH:mm:ss"));
-            victim.Latitude = "" + position.Latitude;
-            victim.Longitude = "" + position.Longitude;
+            victim.Latitude = "" + position.Latitude.ToString().Replace(",",".");
+            victim.Longitude = "" + position.Longitude.ToString().ToString().Replace(",", ".");
             victim.Adress = "" + possibleAddresses.FirstOrDefault();
 
 

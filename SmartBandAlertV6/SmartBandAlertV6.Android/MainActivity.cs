@@ -15,11 +15,14 @@ using SmartBandAlertV6.Droid.Services;
 using Xamarin.Forms;
 using SmartBandAlertV6.Messages;
 using Acr.UserDialogs;
+using ImageCircle.Forms.Plugin.Droid;
+using SmartBandAlertV6.Data;
+using System.Threading.Tasks;
 
 namespace SmartBandAlertV6.Droid
 {
     [Activity(Label = "SmartBandAlertV6", Icon = "@drawable/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
+    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity, IAuthenticate
     {
         public static MediaPlayer _player;
 
@@ -33,19 +36,22 @@ namespace SmartBandAlertV6.Droid
         {
             // Set the current instance of MainActivity.
             CurrentActivity = this;
-
+            App.ScreenWidth = (int)Resources.DisplayMetrics.WidthPixels; // real pixels
+            App.ScreenHeight = (int)Resources.DisplayMetrics.HeightPixels; // real pixels
+            App.ScreenDPI = (int)Resources.DisplayMetrics.DensityDpi;
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
-            if (!App.NotificationOn)
-                _player = MediaPlayer.Create(this, Resource.Raw.siren2);
-
             base.OnCreate(savedInstanceState);
 
-            //SetContentView(Resource.Layout.Main);
-            OnNewIntent(this.Intent);
+            if (!App.NotificationOn)
+            {
+                _player = MediaPlayer.Create(this, Resource.Raw.siren2);
 
 
+            }
+
+            App.Init((IAuthenticate)this);
 
             if (savedInstanceState != null)
             {
@@ -54,12 +60,18 @@ namespace SmartBandAlertV6.Droid
 
             //wire up
             WireUpLongRunningTask();
-           /*startServiceIntent = new Intent(this, typeof(TimestampService));
-            startServiceIntent.SetAction(Constants.ACTION_START_SERVICE);
+            /*startServiceIntent = new Intent(this, typeof(TimestampService));
+             startServiceIntent.SetAction(Constants.ACTION_START_SERVICE);
 
 
-            stopServiceIntent = new Intent(this, typeof(TimestampService));
-            stopServiceIntent.SetAction(Constants.ACTION_STOP_SERVICE);*/
+             stopServiceIntent = new Intent(this, typeof(TimestampService));
+             stopServiceIntent.SetAction(Constants.ACTION_STOP_SERVICE);*/
+
+            OnNewIntent(this.Intent);
+
+
+
+            //SetContentView(Resource.Layout.Main);
 
 
             // On Android:
@@ -69,12 +81,15 @@ namespace SmartBandAlertV6.Droid
                 App.IsLoggedIn = true;
 
 
-            UserDialogs.Init(this);
+            //UserDialogs.Init(this);
 
             Microsoft.WindowsAzure.MobileServices.CurrentPlatform.Init();
             Xamarin.FormsMaps.Init(this, savedInstanceState);
 
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
+
+            //ImageCircleRenderer.Init();
+
 
 
             LoadApplication(new App());
@@ -170,6 +185,21 @@ namespace SmartBandAlertV6.Droid
             }
         }
 
+        public Task<bool> AuthenticateAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool LogoutAsync()
+        {
+            var account = AccountStore.Create(this).FindAccountsForService("Facebook").FirstOrDefault();
+            if (account != null)
+            {
+                AccountStore.Create(this).Delete(account, "Facebook");
+                return true;
+            }
+            return false;
+        }
     }
 }
 

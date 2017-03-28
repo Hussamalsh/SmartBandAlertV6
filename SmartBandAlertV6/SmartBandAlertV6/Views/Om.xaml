@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SmartBandAlertV6.Views.Om"
+             
+             Title="Om"
+             BackgroundColor="#FFFFFF"
+             >
+    <StackLayout Spacing="10" x:Name="layout">
+        <Label Text =""></Label>
+        <Label XAlign="Center" Text="SmartBandAlert är en produkt skapad av Hussam Alshammari och David Almgren. Vi ville skapa en produkt som gör samhället till en säkrare plats genom att kunna hjälpa människor som känner sig utsatta när dem är ute och går. Vi valde då att skapa SmartBandAlert som en lösning till det här problemet. Produkten är fortfarande under utveckling." HorizontalOptions="Center" />
+        <Image Source="sbalogo.png" HorizontalOptions="Center"/>
+    </StackLayout>
+</ContentPage>

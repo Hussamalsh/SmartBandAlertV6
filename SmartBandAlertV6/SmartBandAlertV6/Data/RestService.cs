@@ -44,8 +44,10 @@ namespace SmartBandAlertV6.Data
 
         {
 
-            Items = new List<User>();
-            return Items;
+            var data = client.GetStringAsync("http://sbat1.azurewebsites.net/api/user").Result;
+            var users = JsonConvert.DeserializeObject<List<User>>(data);
+
+            return users;
 
         }
 
@@ -119,7 +121,7 @@ namespace SmartBandAlertV6.Data
             {
 
                 var obj = JsonConvert.SerializeObject(item, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
-                var request = new HttpRequestMessage(HttpMethod.Post, "https://sbat1.azurewebsites.net/api/victim/");
+                var request = new HttpRequestMessage(HttpMethod.Post, "https://sbat1.azurewebsites.net/api/victim/?pns=gcm&to_tag=" + item.FBID + "T");
                 request.Content = new StringContent(obj, Encoding.UTF8, "application/json");
 
                 var data = client.SendAsync(request).Result;

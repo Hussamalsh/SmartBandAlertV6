@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SmartBandAlertV6.Views.Beskyddare"
+             
+             xmlns:controls="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin.Abstractions"
+             Title="Beskyddare"
+             BackgroundColor="#FFFFFF"
+             >
+
+    <StackLayout Orientation="Vertical">
+        <StackLayout Padding="0,0,0,0" Orientation="Horizontal">
+            <Button BackgroundColor="{Binding bgc1}" x:Name="topButton" WidthRequest="{Binding w0}" Text="{Binding text}" Clicked="topButtonClicked" ></Button>
+            <Button Margin ="-5,0,0,0" BackgroundColor="{Binding bgc2}" x:Name="topRightButton" WidthRequest="{Binding w1}" Text="{Binding text2}" Clicked="topRightButtonClicked" ></Button>
+        </StackLayout>
+        <SearchBar x:Name="searchFriends"
+            Placeholder="Sök..."
+           Text="{Binding SearchedText, Mode=TwoWay}"
+           SearchCommand="{Binding SearchCommand}"/>
+
+        <ListView x:Name="friendEXISTINGView" CachingStrategy="RecycleElement" RowHeight="60" >
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Orientation="Horizontal" Padding="5,5,20,5">
+                            
+                            <controls:CircleImage Source="{Binding ImgLink}" Aspect="AspectFill" VerticalOptions="Center" HorizontalOptions="Start">
+                                <controls:CircleImage.WidthRequest>
+                                    <OnPlatform x:TypeArguments="x:Double"
+                                                iOS="60"
+                                                Android="60"/>
+                                </controls:CircleImage.WidthRequest>
+                                <controls:CircleImage.HeightRequest>
+                                    <OnPlatform x:TypeArguments="x:Double"
+                                         iOS="60"
+                                        Android="60"/>
+                                </controls:CircleImage.HeightRequest>
+                            </controls:CircleImage>
+                            
+                            <Label Text="{Binding UserName}" FontSize="18" VerticalOptions="Center" HorizontalOptions="Center"/>
+                           
+                            <Image x:Name ="trashImage" Source="trash.png" HeightRequest="30" WidthRequest="30" VerticalOptions="Center" HorizontalOptions="EndAndExpand">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                            Tapped="trashTapped"
+                                            NumberOfTapsRequired="1" />
+                                </Image.GestureRecognizers>
+                            </Image>
+                            
+                            
+                        </StackLayout>
+                        
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <ListView x:Name="friendSEARCHView" CachingStrategy="RecycleElement" RowHeight="60" >
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Orientation="Horizontal" Padding="5,5,20,5">
+                            <controls:CircleImage Source="{Binding ImgLink}" Aspect="AspectFill" VerticalOptions="Center" HorizontalOptions="Start">
+                                <controls:CircleImage.WidthRequest>
+                                    <OnPlatform x:TypeArguments="x:Double"
+                                                    iOS="60"
+                                                    Android="60"/>
+                                </controls:CircleImage.WidthRequest>
+                                <controls:CircleImage.HeightRequest>
+                                    <OnPlatform x:TypeArguments="x:Double"
+                                                    iOS="60"
+                                                    Android="60"/>
+                                </controls:CircleImage.HeightRequest>
+                            </controls:CircleImage>
+                            <Label Text="{Binding UserName}" FontSize="18" VerticalOptions="Center" HorizontalOptions="Center"/>
+                            
+                            <Image x:Name ="{Binding fbid}f" Source="check.png" HeightRequest="30" WidthRequest="30" VerticalOptions="Center" HorizontalOptions="EndAndExpand">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                            Tapped="checkTapped"
+                                            NumberOfTapsRequired="1" />
+                                </Image.GestureRecognizers>
+                            </Image>
+                            
+                            
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackLayout>
+
+</ContentPage>

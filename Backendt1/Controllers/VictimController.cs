@@ -75,7 +75,8 @@ namespace Backendt1.Controllers
                         break;
                     case "gcm":
                         // Android
-                        var notif = "{ \"data\" : {\"message\":\"" + "From " + value.UserName + ": " + "gcm=message" + "\"}}";
+                        //value.UserName + " Need Help from you. The User ID =" + value.FBID
+                        var notif = "{ \"data\" : {\"message\":\"" + "From "+value.UserName + " Need Help from you. The User ID =" + value.FBID + "\"}}";
                         outcome = await Notifications.Instance.Hub.SendGcmNativeNotificationAsync(notif,f.FriendFBID+ "T");
                         break;
                 }

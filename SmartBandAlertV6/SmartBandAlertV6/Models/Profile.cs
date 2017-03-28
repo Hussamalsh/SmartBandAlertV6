@@ -44,6 +44,12 @@ namespace SmartBandAlertV6.Models
             set;
         }
 
+        public String FBemail
+        {
+            get;
+            set;
+        }
+
         public string Firstname
         {
             get;

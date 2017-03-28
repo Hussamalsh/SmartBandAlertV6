@@ -4,6 +4,7 @@ using System.Linq;
 
 using Foundation;
 using UIKit;
+using Xamarin.Auth;
 
 namespace SmartBandAlertV6.iOS
 {
@@ -23,7 +24,20 @@ namespace SmartBandAlertV6.iOS
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
             global::Xamarin.Forms.Forms.Init();
+
+
+
+            // On IOS:
+            var account = AccountStore.Create().FindAccountsForService("Facebook").FirstOrDefault();
+            if (account != null)
+                App.IsLoggedIn = true;
+
+
             LoadApplication(new App());
+
+
+
+
 
             return base.FinishedLaunching(app, options);
         }

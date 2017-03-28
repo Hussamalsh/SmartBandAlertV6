@@ -580,7 +580,7 @@ namespace SmartBandAlertV6.Droid
             client.MaxResponseContentBufferSize = 256000;
 
             var obj = JsonConvert.SerializeObject(viktem, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
-            var request = new HttpRequestMessage(HttpMethod.Post, "https://sbat1.azurewebsites.net/api/victim/");
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://sbat1.azurewebsites.net/api/victim/?pns=gcm&to_tag="+ viktem.FBID+ "T");
             request.Content = new StringContent(obj, System.Text.Encoding.UTF8, "application/json");
 
             var data = client.SendAsync(request).Result;
