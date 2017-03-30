@@ -13,10 +13,11 @@
             <Button BackgroundColor="{Binding bgc1}" x:Name="topButton" WidthRequest="{Binding w0}" Text="{Binding text}" Clicked="topButtonClicked" ></Button>
             <Button Margin ="-5,0,0,0" BackgroundColor="{Binding bgc2}" x:Name="topRightButton" WidthRequest="{Binding w1}" Text="{Binding text2}" Clicked="topRightButtonClicked" ></Button>
         </StackLayout>
+        
         <SearchBar x:Name="searchFriends"
             Placeholder="Sök..."
            Text="{Binding SearchedText, Mode=TwoWay}"
-           SearchCommand="{Binding SearchCommand}"/>
+           SearchCommand="{Binding SearchCommand}" HeightRequest="50"/>
 
         <ListView x:Name="friendEXISTINGView" CachingStrategy="RecycleElement" RowHeight="60" >
             <ListView.ItemTemplate>

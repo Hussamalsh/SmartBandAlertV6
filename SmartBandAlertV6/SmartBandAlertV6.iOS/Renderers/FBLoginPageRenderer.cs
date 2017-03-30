@@ -100,6 +100,14 @@ namespace SmartBandAlertV6.iOS.Renderers
                         //
                         //saveset(obj["id"], obj["name"]);
 
+                        // Get Shared User Defaults
+                        var plist = NSUserDefaults.StandardUserDefaults;
+                        // Save value
+                        plist.SetString(obj["id"], "PrefId");
+                        plist.SetString(obj["name"], "PrefName");
+                        // Sync changes to database
+                        plist.Synchronize();
+
                     }
                     else
                     {
@@ -119,13 +127,23 @@ namespace SmartBandAlertV6.iOS.Renderers
                         App.EmailAddress = obj["email"];
                         App.ProfilePic = obj["picture"];
                         //
-                       // saveset(obj["id"], obj["name"]);
+                        // saveset(obj["id"], obj["name"]);
+                        
+                        // Get Shared User Defaults
+                        var plist = NSUserDefaults.StandardUserDefaults;
+                        // Save value
+                        plist.SetString(obj["id"], "PrefId");
+                        plist.SetString(obj["name"], "PrefName");
+                        // Sync changes to database
+                        plist.Synchronize();
+
 
                     }
 
                     // On Android: store the account
                     //AccountStore.Create(Context).Save(eargs.Account, "Facebook");
-                    AccountStore.Create().Save(eargs.Account, "Facebook");  //Account object is securely saved on the iOS platform
+                    //AccountStore.Create().Save(eargs.Account, "Facebook");  //Account object is securely saved on the iOS platform
+
                     //Save as a new user to the database
                     await App.UserManager.SaveTaskAsync
                             (new Models.User { FBID = App.FacebookId, UserName = App.FacebookName, Email = App.EmailAddress, ImgLink = App.ProfilePic }, true);
@@ -145,7 +163,7 @@ namespace SmartBandAlertV6.iOS.Renderers
             };
 
 
-            UIViewController vc = auth.GetUI();
+            UIViewController vc = (UIViewController)auth.GetUI();
 
             ViewController.AddChildViewController(vc);
             ViewController.View.Add(vc.View);

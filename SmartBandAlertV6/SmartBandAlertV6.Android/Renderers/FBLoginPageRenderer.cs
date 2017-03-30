@@ -148,7 +148,7 @@ namespace SmartBandAlertV6.Droid.Renderers
             };
 
 
-            var intent = auth.GetUI(activity);
+            Intent intent = (Intent)auth.GetUI(activity);
             activity.StartActivity(intent);
         }
 

@@ -38,24 +38,24 @@ namespace SmartBandAlertV6.Views
 
             startDanger.Clicked += (s, e) => {
 
-                if (BLEProfileManager.bleprofile.Devices.Count != 0)
-                {
+                //if (BLEProfileManager.bleprofile.Devices.Count != 0)
+               // {
 
-                    string status = BLEProfileManager.bleprofile.Devices.FirstOrDefault().Device.State.ToString();
+                   /* string status = BLEProfileManager.bleprofile.Devices.FirstOrDefault().Device.State.ToString();
                     if (status.Equals("Disconnected"))
                     {
                         DisplayAlert("No BlueTooth ", "You need to connect to SmartBand Alert first", "Ok");
 
                     }
                     else
-                    {
+                    {*/
                         var message = new StartLongRunningTaskMessage();
                         MessagingCenter.Send(message, "StartLongRunningTaskMessage");
-                    }
+                   // }
 
-                }
-                else
-                    DisplayAlert("No BlueTooth ", "You need to connect to SmartBand Alert first", "Ok");
+               // }
+               // else
+                 //   DisplayAlert("No BlueTooth ", "You need to connect to SmartBand Alert first", "Ok");
 
 
             };
