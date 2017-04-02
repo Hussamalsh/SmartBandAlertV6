@@ -17,7 +17,8 @@
         <SearchBar x:Name="searchFriends"
             Placeholder="Sök..."
            Text="{Binding SearchedText, Mode=TwoWay}"
-           SearchCommand="{Binding SearchCommand}" HeightRequest="50"/>
+           SearchCommand="{Binding SearchCommand}" HeightRequest="50"
+                   SearchButtonPressed="MainSearchBar_OnSearchButtonPressed"/>
 
         <ListView x:Name="friendEXISTINGView" CachingStrategy="RecycleElement" RowHeight="60" >
             <ListView.ItemTemplate>

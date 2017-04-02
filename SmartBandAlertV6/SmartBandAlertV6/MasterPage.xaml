@@ -4,6 +4,9 @@
              x:Class="SmartBandAlertV6.MasterPage"
              
              Padding="0,40,0,0"
+             
+             Icon="hamburger.png"
+             
              Title="MasterPage">
 
     <ContentPage.Content>

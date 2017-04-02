@@ -28,8 +28,8 @@ namespace SmartBandAlertV6
 
 
         #region Google Auth Settings
-        public static string ClientId = "350066087874-q5qekvd52j96fkrktdqcu0vhmdepk00e.apps.googleusercontent.com";
-        public static string ClientSecret = "jZ-f-oQiqM6dxIjGYjVVS0H2";
+        public static string ClientId = "1061097097490-h79pp9ru9a35p0659r2jcnvou0lp3nr8.apps.googleusercontent.com";
+        public static string ClientSecret = "3WSsdUfTIfk_6GDdOhWLTbTF";
         public static string url1 = "https://www.googleapis.com/auth/userinfo.emai";
         public static string url2 = "https://accounts.google.com/o/oauth2/auth";
         public static string url3 = "https://www.youtube.com/channel/UCOjakhXt0i52uwYRjYBKjsg";
@@ -82,7 +82,7 @@ namespace SmartBandAlertV6
             }
             else
             {
-                MainPage = !IsLoggedIn ? (Page)new LoginPage() : new MainPage1();
+                MainPage = !IsLoggedIn ? (Page)new LoginPage() : new SmartBandAlertV6.Views.MainPage();
             }
 
         }

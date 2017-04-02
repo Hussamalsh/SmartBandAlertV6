@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SmartBandAlertV6.Views.MasterPage"
+            
+             xmlns:controls="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin.Abstractions"
+
+             Padding="0,40,0,0"
+             Title="MasterPage">
+
+    <ContentPage.Content>
+
+        <StackLayout VerticalOptions="FillAndExpand">
+
+            <!--menu top objects-->
+            <StackLayout BackgroundColor="#00AAFF"
+                     HeightRequest="135"
+                     Padding="0,30,0,0">
+
+                <controls:CircleImage Source="installningar.png" Aspect="AspectFill" VerticalOptions="Center" HorizontalOptions="Center" x:Name="imgSRC">
+                    <controls:CircleImage.WidthRequest>
+                        <OnPlatform x:TypeArguments="x:Double"
+                                        iOS="80"
+                                        Android="80"/>
+                    </controls:CircleImage.WidthRequest>
+                    <controls:CircleImage.HeightRequest>
+                        <OnPlatform x:TypeArguments="x:Double"
+                                         iOS="80"
+                                         Android="80"/>
+                    </controls:CircleImage.HeightRequest>
+                </controls:CircleImage>
+
+                <Label Text="NAMN + EFTERNAMN"
+                           FontSize="20"
+                           VerticalOptions="End"
+                           TextColor="White"
+                           HorizontalOptions="Center"
+                           x:Name="nameSet"/>
+
+            </StackLayout>
+
+            <ListView x:Name="listView" VerticalOptions="FillAndExpand" SeparatorVisibility="None">
+
+                <ListView.ItemTemplate>
+
+                    <DataTemplate>
+
+                        <ImageCell Text="{Binding Title}" ImageSource="{Binding IconSource}" />
+
+                    </DataTemplate>
+
+                </ListView.ItemTemplate>
+
+            </ListView>
+
+        </StackLayout>
+
+    </ContentPage.Content>
+
+</ContentPage>
+    

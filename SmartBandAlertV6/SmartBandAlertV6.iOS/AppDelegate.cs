@@ -9,6 +9,10 @@ using Xamarin.Forms;
 using SmartBandAlertV6.Messages;
 using SmartBandAlertV6.iOS.Services;
 using UserNotifications;
+using SmartBandAlertV6.Data;
+using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using Microsoft.WindowsAzure.MobileServices;
 
 namespace SmartBandAlertV6.iOS
 {
@@ -16,7 +20,7 @@ namespace SmartBandAlertV6.iOS
     // User Interface of the application, as well as listening (and optionally responding) to 
     // application events from iOS.
     [Register("AppDelegate")]
-    public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
+    public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate, IAuthenticate
     {
         //
         // This method is invoked when the application has loaded and is ready to run. In this 
@@ -29,7 +33,12 @@ namespace SmartBandAlertV6.iOS
         {
             global::Xamarin.Forms.Forms.Init();
 
+            // define useragent android like
+            string userAgent = "Mozilla/5.0 (Linux; Android 5.1.1; Nexus 5 Build/LMY48B; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/43.0.2357.65 Mobile Safari/537.36";
 
+            // set default useragent
+            NSDictionary dictionary = NSDictionary.FromObjectAndKey(NSObject.FromObject(userAgent), NSObject.FromObject("UserAgent"));
+            NSUserDefaults.StandardUserDefaults.RegisterDefaults(dictionary);
 
             // On IOS:
             /* var account = AccountStore.Create().FindAccountsForService("Facebook").FirstOrDefault();
@@ -40,8 +49,20 @@ namespace SmartBandAlertV6.iOS
             var plist = NSUserDefaults.StandardUserDefaults;
             // Get value
             var useHeader = plist.StringForKey("PrefName");
-            if (useHeader != null)
-                App.IsLoggedIn = true; 
+            if (!String.IsNullOrEmpty(useHeader))
+                App.IsLoggedIn = true;
+
+
+            // Register for push notifications.
+            var settings = UIUserNotificationSettings.GetSettingsForTypes
+                                        ( UIUserNotificationType.Alert | UIUserNotificationType.Badge | UIUserNotificationType.Sound, new NSSet());
+
+            UIApplication.SharedApplication.RegisterUserNotificationSettings(settings);
+            UIApplication.SharedApplication.RegisterForRemoteNotifications();
+
+            //
+
+            App.Init((IAuthenticate)this);
 
 
             App.ScreenWidth = (int)UIScreen.MainScreen.Bounds.Width;
@@ -82,11 +103,11 @@ namespace SmartBandAlertV6.iOS
             else if (UIDevice.CurrentDevice.CheckSystemVersion(8, 0))
             {
                 // Ask the user for permission to get notifications on iOS 8.0+
-                var settings = UIUserNotificationSettings.GetSettingsForTypes(
+                var settingss = UIUserNotificationSettings.GetSettingsForTypes(
                     UIUserNotificationType.Alert | UIUserNotificationType.Badge | UIUserNotificationType.Sound,
                     new NSSet());
 
-                UIApplication.SharedApplication.RegisterUserNotificationSettings(settings);
+                UIApplication.SharedApplication.RegisterUserNotificationSettings(settingss);
             }
 
             LoadApplication(new App());
@@ -126,5 +147,62 @@ namespace SmartBandAlertV6.iOS
                 longRunningTaskExample.Stop();
             });
         }
+
+        public Task<bool> AuthenticateAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool LogoutAsync()
+        {
+            var plist = NSUserDefaults.StandardUserDefaults;
+            var account = plist.StringForKey("PrefName");
+            if (account != null)
+            {
+                plist.SetString("", "PrefName");
+                // Sync changes to database
+                plist.Synchronize();
+                return true;
+            }
+            return false;
+        }
+
+
+
+
+     public override void RegisteredForRemoteNotifications(UIApplication application,NSData deviceToken)
+        {
+            const string templateBodyAPNS = "{\"aps\":{\"alert\":\"$(messageParam)\"}}";
+
+            JObject templates = new JObject();
+            templates["genericMessage"] = new JObject
+         {
+           {"body", templateBodyAPNS}
+         };
+
+            // Register for push with your mobile app
+            var push = TodoItemManager.DefaultManager.CurrentClient.GetPush();
+            push.RegisterAsync(deviceToken, templates);
+        }
+
+        public override void DidReceiveRemoteNotification(UIApplication application,NSDictionary userInfo,
+                                                                                    Action<UIBackgroundFetchResult> completionHandler)
+        {
+            NSDictionary aps = userInfo.ObjectForKey(new NSString("aps")) as NSDictionary;
+
+            string alert = string.Empty;
+            if (aps.ContainsKey(new NSString("alert")))
+                alert = (aps[new NSString("alert")] as NSString).ToString();
+
+            //show alert
+            if (!string.IsNullOrEmpty(alert))
+            {
+                UIAlertView avAlert = new UIAlertView("Notification", alert, null, "OK", null);
+                avAlert.Show();
+            }
+        }
+
+
     }
+    
 }

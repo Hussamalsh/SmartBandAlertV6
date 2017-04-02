@@ -47,8 +47,6 @@ namespace SmartBandAlertV6.Droid
             if (!App.NotificationOn)
             {
                 _player = MediaPlayer.Create(this, Resource.Raw.siren2);
-
-
             }
 
             App.Init((IAuthenticate)this);

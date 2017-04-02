@@ -134,5 +134,14 @@ namespace SmartBandAlertV6.Views
             friendEXISTINGView.ItemsSource = list;
         }
 
+        private async void MainSearchBar_OnSearchButtonPressed(object sender, EventArgs e)
+        {
+            string keyword = searchFriends.Text;
+
+            var list = await App.UserManager.SearchUsersAsync(keyword);
+            friendSEARCHView.ItemsSource = list;
+
+        }
+
     }
 }

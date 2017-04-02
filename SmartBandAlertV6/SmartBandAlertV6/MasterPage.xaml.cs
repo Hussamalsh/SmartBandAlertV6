@@ -30,7 +30,7 @@ namespace SmartBandAlertV6
 
                 Title = "Home Page",
 
-                IconSource = "contacts.png",
+                IconSource = "hem.png",
 
                 TargetType = typeof(HomePage)
 
@@ -41,7 +41,7 @@ namespace SmartBandAlertV6
 
                 Title = "FriendsList",
 
-                IconSource = "todo.png",
+                IconSource = "beskyddare.png",
 
                 TargetType = typeof(SkyddarePage)
 
@@ -52,7 +52,7 @@ namespace SmartBandAlertV6
 
                 Title = "Profile",
 
-                IconSource = "reminders.png",
+                IconSource = "profil.png",
 
                 TargetType = typeof(ProfilePage)
 

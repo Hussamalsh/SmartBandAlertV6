@@ -35,6 +35,10 @@ namespace SmartBandAlertV6
             var Hjalp = new MasterPageItem() { Title = "Hjälp", IconSource = "hjalp.png", TargetType = typeof(Hjalp) };
             var Om = new MasterPageItem() { Title = "Om", IconSource = "om.png", TargetType = typeof(Om) };
 
+            var Logout = new MasterPageItem() { Title = "LogOut", IconSource = "om.png", TargetType = typeof(LogoutPage) };
+
+
+
             // Adding menu items to menuList
             menuList.Add(Hem);
             menuList.Add(Profil);
@@ -43,6 +47,7 @@ namespace SmartBandAlertV6
             menuList.Add(TestAlarm);
             menuList.Add(Hjalp);
             menuList.Add(Om);
+            menuList.Add(Logout);
 
 
             imgSRC.Source = App.ProfilePic;

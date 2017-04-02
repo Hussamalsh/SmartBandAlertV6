@@ -47,9 +47,11 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
-    <CodesignKey>iPhone Developer</CodesignKey>
-    <MtouchDebug>true</MtouchDebug>
+    <CodesignKey>iPhone Developer: hussi01@me.com (GM7S2379CA)</CodesignKey>
+    <MtouchDebug>True</MtouchDebug>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <IOSDebugOverWiFi>False</IOSDebugOverWiFi>
+    <IOSDebuggerPort>10000</IOSDebuggerPort>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -244,6 +246,54 @@
       <Project>{18402573-5c5d-4d60-857a-40904afc379a}</Project>
       <Name>SmartBandAlertV6</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\abstractdesign.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\check.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Bluetooth.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\abstra1ct.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\beskyddare.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\hem.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\hjalp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\installningar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\om.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\profil.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\sbalogo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\trash.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\todo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\todo%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\hamburger.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\hamburger%402x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.3.3.193\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.3.3.193\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" />
