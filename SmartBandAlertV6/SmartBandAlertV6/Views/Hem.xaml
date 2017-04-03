@@ -16,6 +16,13 @@
     </ContentPage.ToolbarItems>
     
     <StackLayout Orientation="Vertical">
+        <StackLayout x:Name="batterystack" Orientation="Horizontal">
+            <Label Text="Batterinivå: " TextColor="Black" VerticalTextAlignment="Center"></Label>
+            <ProgressBar x:Name="progBar" Progress="{Binding theprog}" WidthRequest="{Binding w4}" />
+            <Label x:Name="progBarText" VerticalTextAlignment="Center" Text="{Binding theprogtext}" FontSize="18"></Label>
+            <Button BackgroundColor="{Binding bgc3}" x:Name="checkBattery" Text="Uppdatera" Clicked="Button_OnClickedBatteriUppdat"></Button>
+        </StackLayout>
+        <Label Text="Smartband Enheten:" TextColor="Black" VerticalTextAlignment="Center" FontSize="Large"></Label>
         <ListView x:Name="theBTunits" CachingStrategy="RecycleElement" RowHeight="55" >
             <ListView.ItemTemplate>
                 <DataTemplate>

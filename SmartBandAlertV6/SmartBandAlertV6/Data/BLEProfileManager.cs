@@ -42,6 +42,8 @@ namespace SmartBandAlertV6.Data
             bleprofile.ble = CrossBluetoothLE.Current;
             bleprofile.Adapter = CrossBluetoothLE.Current.Adapter;
 
+            bleprofile.Adapter.DeviceDisconnected += OnDeviceDisconnected;
+            bleprofile.Adapter.DeviceConnectionLost += OnDeviceConnectionLost;
             bleprofile.Adapter.DeviceDiscovered += OnDeviceDiscovered;
             bleprofile.Adapter.StartScanningForDevicesAsync();
         }
@@ -110,42 +112,57 @@ namespace SmartBandAlertV6.Data
 
         }
 
-
+        /*
         public async void checkservice()
         {
 
             if (bleprofile.Devices.Count != 0)
             {
                 //string s = bleprofile.Devices.FirstOrDefault().Device.State.ToString();
-               /* if (s.Equals("Disconnected"))
-                {
-                    bleprofile.Adapter.ConnectToDeviceAsync(bleprofile.Devices.FirstOrDefault().Device);
-                    */
+                /* if (s.Equals("Disconnected"))
+                 {
+                     bleprofile.Adapter.ConnectToDeviceAsync(bleprofile.Devices.FirstOrDefault().Device);
+                     */
 
-                    foreach (DeviceListItemViewModel item in bleprofile.Devices)
-                        if (item.Name != null)
+                /*foreach (DeviceListItemViewModel item in bleprofile.Devices)
+                    if (item.Name != null)
+                    {
+                        if (item.Name.Equals("SmartBandAlert"))
                         {
-                            if (item.Name.Equals("SmartBandAlert"))
+                            IDevice d = item.Device;
+                            bleprofile.Adapter.ConnectToDeviceAsync(d);
+                            bleprofile.Services = await d.GetServicesAsync();
+                            //Services = d.GetServicesAsync();
+                            while (bleprofile.Services.Count == 0)
                             {
-                                IDevice d = item.Device;
-                                bleprofile.Adapter.ConnectToDeviceAsync(d);
                                 bleprofile.Services = await d.GetServicesAsync();
-                                //Services = d.GetServicesAsync();
-                                while (bleprofile.Services.Count == 0)
-                                {
-                                    bleprofile.Services = await d.GetServicesAsync();
-                                }
-
-                                checkchar();
-
                             }
+
+                            checkchar();
+
                         }
+                    }*/
 
                 //}
-            }
-        }
 
-        async void checkchar()
+               /* IDevice d = bleprofile.Devices.FirstOrDefault().Device;
+                bleprofile.Adapter.ConnectToDeviceAsync(d);
+
+                bleprofile.Services = await d.GetServicesAsync();
+                while (bleprofile.Services.Count == 0)
+                {
+                    bleprofile.Services = await d.GetServicesAsync();
+                }
+
+                checkchar();
+            }
+
+
+
+
+        }*/
+
+       /* async void checkchar()
         {
             foreach (IService item in bleprofile.Services)
                 if (item.Name != null)
@@ -157,8 +174,8 @@ namespace SmartBandAlertV6.Data
                     }
                 }
 
-           // choosechar();
-        }
+            choosecharWrite();
+        }*/
 
 
         async void choosechar()
@@ -167,7 +184,7 @@ namespace SmartBandAlertV6.Data
             foreach (ICharacteristic item in bleprofile.Characteristics)
                 if (item.Name != null)
                 {
-                    if (item.Uuid.Equals("2d30c082-f39f-4ce6-923f-3484ea480596"))
+                    if (item.Uuid.Equals("6e400003-b5a3-f393-e0a9-e50e24dcca9e"))
                     {
                         bleprofile.CharacteristicT = item;
                         StartUpdates();
@@ -175,22 +192,48 @@ namespace SmartBandAlertV6.Data
                         // WriteValueAsync();
                     }
                 }
+            choosecharWrite();
+        }
+
+        async void choosecharWrite()
+        {
+
+            foreach (ICharacteristic item in bleprofile.Characteristics)
+                if (item.Name != null)
+                {
+                    if (item.Uuid.Equals("6e400002-b5a3-f393-e0a9-e50e24dcca9e"))
+                    {
+                        bleprofile.CharacteristicT = item;
+                        //StartUpdates();
+                        //ReadValueAsync();
+                        WriteValueAsync();
+                    }
+                }
 
         }
 
 
-        private async void WriteValueAsync()
+        private async Task WriteValueAsync()
         {
+            
+            bleprofile.CharacteristicT = await bleprofile.Services.GetCharacteristicAsync(Guid.Parse("6e400002-b5a3-f393-e0a9-e50e24dcca9e"));
+
             try
             {
 
+                //var data = GetBytes("11");
+                byte[] toBytes = Encoding.UTF8.GetBytes("11");
 
-                var data = GetBytes("1");
 
-                await bleprofile.CharacteristicT.WriteAsync(data);
+                // RxChar.setValue(data.getBytes(Charset.forName("UTF-8")));
+
+                bleprofile.CharacteristicT.WriteAsync(toBytes);
 
                 //RaisePropertyChanged(() => CharacteristicValue);
-                OnPropertyChanged((nameof(bleprofile.CharacteristicValue)));
+
+                //OnPropertyChanged((nameof(bleprofile.CharacteristicValue)));
+
+
                 // DisplayAlert("value", CharacteristicValue, "ok");
                 //Messages.Insert(0, $"Wrote value {CharacteristicValue}");
             }
@@ -254,20 +297,72 @@ namespace SmartBandAlertV6.Data
                 //_userDialogs.ShowError(ex.Message);
             }
         }
+
+        public string batteryLevel;
         private void CharacteristicOnValueUpdated(object sender, CharacteristicUpdatedEventArgs characteristicUpdatedEventArgs)
         {
+            getcharacteristicRXAsync();
             // Messages.Insert(0, $"Updated value: {CharacteristicValue}");
             //RaisePropertyChanged(() => CharacteristicValue);
             OnPropertyChanged(nameof(bleprofile.CharacteristicValue));
 
-
-            //if (!String.IsNullOrEmpty(bleprofile.CharacteristicValue))
-               // App.bleProfileM.PostData();
+            
+            if (!String.IsNullOrEmpty(bleprofile.CharacteristicValue))
+                batteryLevel = System.Text.Encoding.UTF8.GetString(bleprofile.CharacteristicT.Value, 0, bleprofile.CharacteristicT.Value.Length);
         }
 
         private static byte[] GetBytes(string text)
         {
             return text.Split(' ').Where(token => !string.IsNullOrEmpty(token)).Select(token => Convert.ToByte(token, 16)).ToArray();
+        }
+
+
+        public string getBatterylevelAsync()
+        {
+
+           /* StartUpdates();
+            ReadValueAsync();*/
+
+           
+            WriteValueAsync();
+
+
+            while (String.IsNullOrEmpty(batteryLevel))
+            {
+
+            }
+
+            return batteryLevel;
+        }
+
+        public async Task waitAsync()
+        {
+            await Task.Delay(2000);
+        }
+
+
+        private void OnDeviceDisconnected(object sender, DeviceEventArgs e)
+        {
+            bleprofile.Devices.FirstOrDefault(d => d.Id == e.Device.Id)?.Update();
+            //DisplayAlert("disconnected", "Try again ur disconnected", "Ok");
+        }
+
+        private void OnDeviceConnectionLost(object sender, DeviceErrorEventArgs e)
+        {
+            bleprofile.Devices.FirstOrDefault(d => d.Id == e.Device.Id)?.Update();
+
+            //DisplayAlert("connection lost", "Try again ur disconnected", "Ok");
+        }
+
+        public async void getUnknownServiceAsync()
+        {
+            bleprofile.Services = await bleprofile.Adapter.ConnectedDevices.FirstOrDefault().GetServiceAsync(Guid.Parse("6e400001-b5a3-f393-e0a9-e50e24dcca9e"));
+            getcharacteristicRXAsync();
+        }
+        public async void getcharacteristicRXAsync()
+        {
+            bleprofile.CharacteristicT = await bleprofile.Services.GetCharacteristicAsync(Guid.Parse("6e400003-b5a3-f393-e0a9-e50e24dcca9e"));
+            StartUpdates();
         }
 
 

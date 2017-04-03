@@ -16,7 +16,7 @@ namespace SmartBandAlertV6.Models
         public IAdapter Adapter { get; set; }
         public ObservableCollection<DeviceListItemViewModel> Devices { get; set; } = new ObservableCollection<DeviceListItemViewModel>();
         public IBluetoothLE ble { get; set; }
-        public IList<IService> Services { get; set; }
+        public IService Services { get; set; }
         private IList<ICharacteristic> _characteristics;
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -33,29 +33,35 @@ namespace SmartBandAlertV6.Views
             stopDanger.BindingContext = new { w1 = App.ScreenWidth * 160 / (App.ScreenDPI), bgc2 = Color.White };
             startDanger.BindingContext = new { w0 = App.ScreenWidth * 160 / (App.ScreenDPI), bgc1 = Color.FromHex("#ededed") };
 
+            //Battery 
+            progBar.BindingContext = new { w4 = App.ScreenWidth * 160 / (App.ScreenDPI * 3), theprog = 0.5 };
+            progBar.Scale = 1;
+            batterystack.HorizontalOptions = LayoutOptions.CenterAndExpand;
+            progBarText.BindingContext = new { theprogtext = "50%" };
+            checkBattery.BindingContext = new { bgc3 = Color.White };
 
 
 
             startDanger.Clicked += (s, e) => {
 
-                //if (BLEProfileManager.bleprofile.Devices.Count != 0)
-               // {
+                if (BLEProfileManager.bleprofile.Devices.Count != 0)
+                {
 
-                   /* string status = BLEProfileManager.bleprofile.Devices.FirstOrDefault().Device.State.ToString();
+                    string status = BLEProfileManager.bleprofile.Devices.FirstOrDefault().Device.State.ToString();
                     if (status.Equals("Disconnected"))
                     {
                         DisplayAlert("No BlueTooth ", "You need to connect to SmartBand Alert first", "Ok");
 
                     }
                     else
-                    {*/
+                    {
                         var message = new StartLongRunningTaskMessage();
                         MessagingCenter.Send(message, "StartLongRunningTaskMessage");
-                   // }
+                    }
 
-               // }
-               // else
-                 //   DisplayAlert("No BlueTooth ", "You need to connect to SmartBand Alert first", "Ok");
+                }
+                else
+                    DisplayAlert("No BlueTooth ", "You need to connect to SmartBand Alert first", "Ok");
 
 
             };
@@ -124,6 +130,7 @@ namespace SmartBandAlertV6.Views
 
             this.theBTunits.ItemsSource = BLEProfileManager.bleprofile.Devices;
 
+                BLEProfileManager.getUnknownServiceAsync();
 
             }
 
@@ -192,9 +199,22 @@ namespace SmartBandAlertV6.Views
         }
 
 
+        void Button_OnClickedBatteriUppdat(Object obj, EventArgs e)
+        {
+            string bLvL =  BLEProfileManager.getBatterylevelAsync();
+
+            int nr = int.Parse(bLvL);
+            int newnr = nr / 105;
+            progBar.BindingContext = new { w4 = App.ScreenWidth * 160 / (App.ScreenDPI * 3), theprog = 0.1 };
+            progBarText.BindingContext = new { theprogtext = newnr };
 
 
-        async void OnBLEYesNoClicked()
+        }
+
+
+
+
+            async void OnBLEYesNoClicked()
         {
             BLEProfileManager.init();
             if (!BLEProfileManager.bleprofile.ble.IsOn)//ToFix= see if the user answer this quetion or not

@@ -57,6 +57,7 @@ namespace SmartBandAlertV6.Droid.Renderers
                                     new Uri(App.url2),
                                     new Uri(App.url3),// Set this property to the location the user will be redirected too after successfully authenticating
                                     new Uri(App.url4)
+                                    //,isUsingNativeUI: true
                                     );
 
                         break;
@@ -107,7 +108,9 @@ namespace SmartBandAlertV6.Droid.Renderers
                     }
                     else
                     {
-                        var request = new OAuth2Request("GET", new Uri("https://www.googleapis.com/plus/v1/people/me/openIdConnect"), null, eargs.Account);
+                    string url1 = "https://www.googleapis.com/oauth2/v2/userinfo";
+                        string url2 = "https://www.googleapis.com/plus/v1/people/me/openIdConnect";
+                        var request = new OAuth2Request("GET", new Uri(url1), null, eargs.Account);
                         var result = await request.GetResponseAsync();
 
                         string resultText = result.GetResponseText();

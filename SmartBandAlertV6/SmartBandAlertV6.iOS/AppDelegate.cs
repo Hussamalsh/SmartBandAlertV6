@@ -65,9 +65,9 @@ namespace SmartBandAlertV6.iOS
             App.Init((IAuthenticate)this);
 
 
-            App.ScreenWidth = (int)UIScreen.MainScreen.Bounds.Width;
-            App.ScreenHeight = (int)UIScreen.MainScreen.Bounds.Height;
-            App.ScreenDPI = 326;
+            App.ScreenWidth = (int)UIScreen.MainScreen.Bounds.Width * 4;
+            App.ScreenHeight = (int)UIScreen.MainScreen.Bounds.Height * 2;
+            App.ScreenDPI = 600;
 
             // check for a notification
             if (launchOptions != null)
