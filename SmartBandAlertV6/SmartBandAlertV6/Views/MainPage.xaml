@@ -19,7 +19,7 @@
     <MasterDetailPage.Detail>
         <NavigationPage>
             <x:Arguments>
-                <local:Hem />
+                <local:HemPage />
             </x:Arguments>
         </NavigationPage>
     </MasterDetailPage.Detail>

@@ -1,20 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SmartBandAlertV6.Views.Hem"
+             x:Class="SmartBandAlertV6.Views.HemPage"
              
              xmlns:controls="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin.Abstractions"
-             Title="Hem"
+             Title="Hemsida"
              BackgroundColor="#FFFFFF"
              
              >
 
-
-
     <ContentPage.ToolbarItems>
         <ToolbarItem x:Name="ScanText" Text="Skanna" Clicked="Button_OnClickedScanToggle" Order="Primary"></ToolbarItem>
     </ContentPage.ToolbarItems>
-    
+
     <StackLayout Orientation="Vertical">
         <StackLayout x:Name="batterystack" Orientation="Horizontal">
             <Label Text="Batterinivå: " TextColor="Black" VerticalTextAlignment="Center"></Label>
@@ -50,11 +48,11 @@
                             <Button BackgroundColor="#000000" TextColor="#FFFFFF" x:Name="connectButton" Text="{Binding ButtonName}" 
                                     Clicked="connectClicked" VerticalOptions="Center"
                                     HorizontalOptions="EndAndExpand" ></Button>
-                           <!-- 
+                            <!-- 
                             <Button BackgroundColor="#000000" TextColor="#FFFFFF" x:Name="disconnectButton" Text="Avslut" Clicked="disconnectClicked" VerticalOptions="Center"
                                     HorizontalOptions="EndAndExpand" IsVisible="{Binding IsConnected}" > </Button>
                             -->
-                          
+
                         </StackLayout>
 
                     </ViewCell>
@@ -66,8 +64,6 @@
             <Button Margin ="-5,0,0,0" BackgroundColor="{Binding bgc2}" x:Name="stopDanger" WidthRequest="{Binding w1}" Text="Stäng av farligt läge"></Button>
         </StackLayout>
     </StackLayout>
-
-
 
 
 

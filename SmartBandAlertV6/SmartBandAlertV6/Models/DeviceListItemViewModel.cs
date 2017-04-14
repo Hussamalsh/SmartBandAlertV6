@@ -17,10 +17,12 @@ namespace SmartBandAlertV6.Models
         public bool IsConnected => Device.State == DeviceState.Connected;
         public int Rssi => Device.Rssi;
         public string Name => Device.Name;
-
+        public string ButtonName => ((Device.State == DeviceState.Connected) ? "Avslut" : "Anslut");
         public DeviceListItemViewModel(IDevice device)
         {
             Device = device;
+            OnPropertyChanged(nameof(ButtonName));
+            OnPropertyChanged(nameof(IsConnected));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -33,6 +35,7 @@ namespace SmartBandAlertV6.Models
             }
             OnPropertyChanged(nameof(IsConnected));
             OnPropertyChanged(nameof(Rssi));
+            OnPropertyChanged(nameof(ButtonName));
         }
 
         protected virtual void OnPropertyChanged(string propertyName)

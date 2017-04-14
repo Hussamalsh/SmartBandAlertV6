@@ -99,7 +99,12 @@ namespace SmartBandAlertV6.Droid
                     viktem = new Victim();
                     //var ble = CrossBluetoothLE.Current;
                     //Adapter = CrossBluetoothLE.Current.Adapter;
-                    Adapter = App.BLEProfileManager.bleprofile.Adapter;
+                    //IDevice device = App.BLEProfileManager.bleprofile.Adapter.ConnectedDevices.FirstOrDefault();
+                    //this.Adapter.ConnectToDeviceAsync(device);
+
+                    this.Adapter = App.BLEProfileManager.bleprofile.Adapter;
+
+                    //Adapter = App.BLEProfileManager.bleprofile.Adapter;
                     /*if (Adapter.ConnectedDevices.Count == 0)
                     {
                         Adapter.DeviceDiscovered += OnDeviceDiscovered;
@@ -114,9 +119,8 @@ namespace SmartBandAlertV6.Droid
 
                        */
                     Devices = App.BLEProfileManager.bleprofile.Devices;
-                        checkservice();
+                    checkservice();
                     //}
-
                     Log.Info(TAG, "OnStartCommand: The service is starting.");
                     RegisterForegroundService();
                     handler.PostDelayed(runnable, Constants.DELAY_BETWEEN_LOG_MESSAGES);
@@ -290,7 +294,7 @@ namespace SmartBandAlertV6.Droid
         /// <summary>
         /// /////////------------------------------------Test
         /// </summary>
-        public IList<IService> Services { get; private set; }
+        public IService Services { get; private set; }
         async void checkservice()
         {
             /*foreach (DeviceListItemViewModel item in Devices)
@@ -315,7 +319,7 @@ namespace SmartBandAlertV6.Droid
                 }
                 */
 
-            IDevice d = Devices.FirstOrDefault().Device;
+            /*IDevice d = Adapter.ConnectedDevices.FirstOrDefault();
             Adapter.ConnectToDeviceAsync(d);
 
             Services = await d.GetServicesAsync();
@@ -323,8 +327,13 @@ namespace SmartBandAlertV6.Droid
             {
                 Services = await d.GetServicesAsync();
             }
+            */
 
-            checkchar();
+            Services = await Adapter.ConnectedDevices.FirstOrDefault().GetServiceAsync(Guid.Parse("6e400001-b5a3-f393-e0a9-e50e24dcca9e"));
+
+            //checkchar();
+
+            choosechar();
 
         }
         private IList<ICharacteristic> _characteristics;
@@ -339,9 +348,8 @@ namespace SmartBandAlertV6.Droid
 
             }
         }
-        async void checkchar()
+        /*async void checkchar()
         {
-            foreach (IService item in Services)
                 if (item.Name != null)
                 {
                     if (item.Name.Equals("Unknown Service"))
@@ -352,13 +360,13 @@ namespace SmartBandAlertV6.Droid
                 }
 
             choosechar();
-        }
+        }*/
         public ICharacteristic CharacteristicT { get; private set; }
 
         async void choosechar()
         {
 
-            foreach (ICharacteristic item in Characteristics)
+           /* foreach (ICharacteristic item in Characteristics)
                 if (item.Name != null)
                 {
                     if (item.Uuid.Equals("6e400003-b5a3-f393-e0a9-e50e24dcca9e"))
@@ -369,6 +377,10 @@ namespace SmartBandAlertV6.Droid
                         // WriteValueAsync();
                     }
                 }
+                */
+             CharacteristicT = await Services.GetCharacteristicAsync(Guid.Parse("6e400003-b5a3-f393-e0a9-e50e24dcca9e"));
+             StartUpdates();
+             //ReadValueAsync();
 
         }
 

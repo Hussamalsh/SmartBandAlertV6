@@ -30,7 +30,7 @@
                     <TextCell Text="Visningsnamn:" Detail="Hussam Alshammari"  x:Name="Visningsnamn" />
                     <TextCell Text="Mailadress" Detail="Hussamtheman@gmail.com" x:Name="Mailadress" />
                     <TextCell Text="Facebook/google id:" Detail="819233298322392" x:Name="FacegoogID" />
-                    <TextCell Text="Nuvarande plats:" Detail="Hussis place" x:Name="location" />
+                    <TextCell Text="Nuvarande plats:" Detail="Halmstad" x:Name="location" />
                 </TableSection>
             </TableRoot>
         </TableView>

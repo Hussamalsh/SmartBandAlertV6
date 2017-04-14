@@ -96,6 +96,9 @@
     <Compile Include="Views\Hem.xaml.cs">
       <DependentUpon>Hem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\HemPage.xaml.cs">
+      <DependentUpon>HemPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Hjalp.xaml.cs">
       <DependentUpon>Hjalp.xaml</DependentUpon>
     </Compile>
@@ -299,6 +302,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Views\MasterPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\HemPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

@@ -20,6 +20,7 @@ namespace SmartBandAlertV6.Views
             Visningsnamn.Detail = App.FacebookName;
             Mailadress.Detail = App.EmailAddress;
             FacegoogID.Detail = App.FacebookId;
+            location.Detail = "Halmstad";
 
         }
     }

@@ -19,7 +19,7 @@ namespace SmartBandAlertV6.Views
 
         public BLEProfileManager BLEProfileManager;
 
-
+        
 
         public Hem()
         {
@@ -46,8 +46,8 @@ namespace SmartBandAlertV6.Views
 
                 if (BLEProfileManager.bleprofile.Devices.Count != 0)
                 {
-
-                    string status = BLEProfileManager.bleprofile.Devices.FirstOrDefault().Device.State.ToString();
+                    var device = BLEProfileManager.bleprofile.Devices.FirstOrDefault().Device;
+                    string status = device.State.ToString();
                     if (status.Equals("Disconnected"))
                     {
                         DisplayAlert("No BlueTooth ", "You need to connect to SmartBand Alert first", "Ok");
@@ -55,8 +55,21 @@ namespace SmartBandAlertV6.Views
                     }
                     else
                     {
+
+                        //switchconnectbutton = 0;
+                        //App.isConnectedBLE = false;
+                        //need to be implement
+                        //BLEProfileManager.bleprofile.Adapter.DisconnectDeviceAsync(device);
+                        //BLEProfileManager.bleprofile.Devices.Clear();
+                        //BLEProfileManager.init();
+                        BLEProfileManager.newBLEprofile();
+                        Task.Delay(1000);
+                        BLEProfileManager.bleprofile.Adapter.ConnectToDeviceAsync(device);
+                        Task.Delay(1000);
                         var message = new StartLongRunningTaskMessage();
                         MessagingCenter.Send(message, "StartLongRunningTaskMessage");
+
+
                     }
 
                 }
@@ -80,17 +93,33 @@ namespace SmartBandAlertV6.Views
             base.OnAppearing();
 
             OnBLEYesNoClicked();
-
             //GetSystemConnectedOrPairedDevices();
             if (BLEProfileManager.bleprofile.Devices.Count != 0)
+            {
+                /*
+                if (App.button != null)
+                {
+                    var device = BLEProfileManager.bleprofile.Devices.FirstOrDefault(d => d.IsConnected == true);
+                    if(device!= null)
+                        App.button.Text = "Avslut";
+                }
+                */
                 this.theBTunits.ItemsSource = BLEProfileManager.bleprofile.Devices;
-
+            }
         }
-
-
+        
+        int switchconnectbutton = 0;
         async void connectClicked(object sender, EventArgs e)
         {
-            bool answer = await DisplayAlert("Beskyddare", "Vill du ansluta till den här bluetooth enheten?", "Ja", "Nej");
+            bool answer;
+            if (switchconnectbutton == 0)
+            {
+                answer = await DisplayAlert("Beskyddare", "Vill du ansluta till den här bluetooth enheten?", "Ja", "Nej");
+            }
+            else
+            {
+                answer = await DisplayAlert("Beskyddare", "Vill du avsluta till den här bluetooth enheten?", "Ja", "Nej");
+            }
 
             if (answer == true) {
                 //var mi = ((MenuItem)sender);
@@ -101,36 +130,54 @@ namespace SmartBandAlertV6.Views
 
             try
             {
-                BLEProfileManager.bleprofile.Adapter.ConnectToDeviceAsync(item.Device);
+                
+                    if (switchconnectbutton == 0)
+                    {
+                        switchconnectbutton = 1;
 
-                item.Update();
+                        BLEProfileManager.bleprofile.Adapter.ConnectToDeviceAsync(item.Device);
+            
+                        item.Update();
+                        DisplayAlert("Your connected to ", item.Device.Name, "Ok");
+                        for (var i = 2; i >= 1; i--)
+                        {
+                            await Task.Delay(1000);
+                        }
+                       
+                        //App.button.Text = "Avsluta";
+                        App.isConnectedBLE = true;
+                        App.BlegUID = item.Device.Id.ToString();
+                        ((App)App.Current).SaveProfile();
 
-                for (var i = 2; i >= 1; i--)
-                {
+                        BLEProfileManager.getUnknownServiceAsync();
 
-                    await Task.Delay(1000);
+                    }
+                    else
+                    {
+                        //App.button.Text = "Anslut";
+                        switchconnectbutton = 0;
+                        App.isConnectedBLE = false;
+                        //need to be implement
+                        BLEProfileManager.bleprofile.Adapter.DisconnectDeviceAsync(item.Device);
+                        DisplayAlert("Your disconnected from ", item.Device.Name, "Ok");
+                        for (var i = 2; i >= 1; i--)
+                        {
+                            await Task.Delay(900);
+                        }
+      
+                    }
 
                 }
-
-            }
             catch (Exception ex)
             {
+                    DisplayAlert("Wrong ", "Something bad happeed", "Ok");
             }
             finally
             {
-                // this.Devicesl.ItemsSource = this.Devices;
-
+                    //BLEProfileManager.bleprofile.Devices.FirstOrDefault().Update();
+                    BLEProfileManager.bleprofile.Devices.FirstOrDefault(d => d.Device.Id == item.Id).Update();
+                    this.theBTunits.ItemsSource = this.BLEProfileManager.bleprofile.Devices;
             }
-
-            this.theBTunits.ItemsSource = null;
-            DisplayAlert("Your connected to ", item.Device.Name, "Ok");
-
-            App.BlegUID = item.Device.Id.ToString();
-            ((App)App.Current).SaveProfile();
-
-            this.theBTunits.ItemsSource = BLEProfileManager.bleprofile.Devices;
-
-                BLEProfileManager.getUnknownServiceAsync();
 
             }
 
@@ -198,30 +245,50 @@ namespace SmartBandAlertV6.Views
                 DisplayAlert("Error: Bluetooth is off?", "Turn on the Bluetooth?", "OK");
         }
 
-
-        void Button_OnClickedBatteriUppdat(Object obj, EventArgs e)
+        async void Button_OnClickedBatteriUppdat(Object obj, EventArgs e)
         {
-            string bLvL =  BLEProfileManager.getBatterylevelAsync();
-
-            int nr = int.Parse(bLvL);
-            int newnr = nr / 105;
-            progBar.BindingContext = new { w4 = App.ScreenWidth * 160 / (App.ScreenDPI * 3), theprog = 0.1 };
-            progBarText.BindingContext = new { theprogtext = newnr };
-
-
+            if (BLEProfileManager.bleprofile.Devices.Count != 0)
+            {
+                
+                 // var device = BLEProfileManager.bleprofile.Devices.FirstOrDefault(d => d.IsConnected == true);
+                if (App.isConnectedBLE)
+                {
+                    string bLvL = BLEProfileManager.getBatterylevelAsync();
+                    int nr = int.Parse(bLvL);
+                    if (nr > 105)
+                        await DisplayAlert("Charging:", " The Battery is on Charge", "OK");
+                    else
+                    {
+                        double result = (((double)nr / 105) * 100);
+                        progBar.BindingContext = new { w4 = App.ScreenWidth * 160 / (App.ScreenDPI * 3), theprog = (result / 100) };
+                        progBarText.BindingContext = new { theprogtext = result.ToString("#") + "%" };
+                    }
+                }
+                else
+                    DisplayAlert("Error:", "Connect to a device first", "OK");
+            }
+            else
+                DisplayAlert("Error: Bluetooth is off?", "Turn on the Bluetooth?", "OK");
+        }
+        async void OnBLEYesNoClicked()
+        {
+            BLEProfileManager.init();
+            int e;
+            if (await checkBLEAsync())
+                e=1;
+                //BLEProfileManager.init();
         }
 
 
-
-
-            async void OnBLEYesNoClicked()
+        private async Task<bool> checkBLEAsync()
         {
-            BLEProfileManager.init();
+            bool isBLEon = true;
             if (!BLEProfileManager.bleprofile.ble.IsOn)//ToFix= see if the user answer this quetion or not
             {
                 await DisplayAlert("Error: Bluetooth is off?", "Turn on the Bluetooth?", "OK");
+                isBLEon = false;
             }
-
+            return isBLEon;
         }
 
     }

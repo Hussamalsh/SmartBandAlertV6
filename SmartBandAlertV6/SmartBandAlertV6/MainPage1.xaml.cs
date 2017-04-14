@@ -26,7 +26,7 @@ namespace SmartBandAlertV6
             menuList = new List<MasterPageItem>();
 
             // Creating pages for menu navigation
-            var Hem = new MasterPageItem() { Title = "Hem", IconSource = "hem.png", TargetType = typeof(Hem) };
+            var Hem = new MasterPageItem() { Title = "Hem", IconSource = "hem.png", TargetType = typeof(HemPage) };
             var Profil = new MasterPageItem() { Title = "Profil", IconSource = "profil.png", TargetType = typeof(Profil) };
             var Beskyddare = new MasterPageItem() { Title = "Beskyddare", IconSource = "beskyddare.png", TargetType = typeof(Beskyddare) };
             //var Installningar = new MasterPageItem() { Title = "Inställningar", Icon = "installningar.png", TargetType = typeof(Installningar) };
@@ -57,7 +57,7 @@ namespace SmartBandAlertV6
             navigationDrawerList.ItemsSource = menuList;
 
             // Initial navigation(homepage)
-            Detail = new NavigationPage((Page)Activator.CreateInstance(typeof(Hem)));
+            Detail = new NavigationPage((Page)Activator.CreateInstance(typeof(HemPage)));
         }
 
         // Event for Menu Item selection, here we are going to handle navigation based

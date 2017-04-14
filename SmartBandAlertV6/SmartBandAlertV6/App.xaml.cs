@@ -162,9 +162,11 @@ namespace SmartBandAlertV6
             set;
         }
 
-
-
-
+        public static bool isConnectedBLE
+        {
+            get;
+            set;
+        }
 
         protected override void OnStart()
         {

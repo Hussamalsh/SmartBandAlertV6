@@ -48,6 +48,12 @@ namespace SmartBandAlertV6.Data
             bleprofile.Adapter.StartScanningForDevicesAsync();
         }
 
+        public void newBLEprofile()
+        {
+            bleprofile = new BLEProfile();
+            bleprofile.ble = CrossBluetoothLE.Current;
+            bleprofile.Adapter = CrossBluetoothLE.Current.Adapter;
+        }
 
         public async void ScanForDevices()
         {

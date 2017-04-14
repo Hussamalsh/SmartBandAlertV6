@@ -31,7 +31,7 @@ namespace SmartBandAlertV6.Views
             {
                 Title = "Hem",
                 IconSource = "hem.png",
-                TargetType = typeof(Hem)
+                TargetType = typeof(HemPage)
             });
 
             masterPageItems.Add(new MasterPageItem
