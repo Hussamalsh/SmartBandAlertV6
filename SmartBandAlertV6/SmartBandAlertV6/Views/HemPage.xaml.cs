@@ -22,29 +22,28 @@ namespace SmartBandAlertV6.Views
     public partial class HemPage : ContentPage
     {
         IDisposable scan;
-        IDisposable connect;
 
-        public IAdapter BleAdapter;
+
         //public IAppState AppState;
 
-        public ObservableCollection<ScanResultViewModel> Devices { get; }
        // public string ScanText { get; private set; }
         public bool IsScanning { get; private set; }
 
-        public bool IsSupported { get; private set; }
-        public string Title { get; private set; }
+        //public string Title { get; private set; }
 
-        public string ConnectText { get; private set; } = "Connect";
+        IDisposable subNoTIFY;
 
+
+        public BLEAcrProfileManager bleACRProfileManager;
 
         public HemPage()
         {
             
-
             InitializeComponent();
 
+            bleACRProfileManager = App.BLEAcrProfileManager;
 
-            theBTunits.IsPullToRefreshEnabled = true;
+            //theBTunits.IsPullToRefreshEnabled = true;
 
             stopDanger.BindingContext = new { w1 = App.ScreenWidth * 160 / (App.ScreenDPI), bgc2 = Color.White };
             startDanger.BindingContext = new { w0 = App.ScreenWidth * 160 / (App.ScreenDPI), bgc1 = Color.FromHex("#ededed") };
@@ -56,9 +55,19 @@ namespace SmartBandAlertV6.Views
             progBarText.BindingContext = new { theprogtext = "50%" };
             checkBattery.BindingContext = new { bgc3 = Color.White };
 
-            startDanger.Clicked += (s, e) => {
-                        var message = new StartLongRunningTaskMessage();
-                        MessagingCenter.Send(message, "StartLongRunningTaskMessage");
+            startDanger.Clicked += async (s, e) =>
+            {
+
+                if (App.isConnectedBLE)
+                {
+                    subNoTIFY.Dispose();
+                    var message = new StartLongRunningTaskMessage();
+                    MessagingCenter.Send(message, "StartLongRunningTaskMessage");
+                }
+                else
+                    await DisplayAlert("Wrong ", "Conect to a device first", "Ok");
+
+
             };
 
             stopDanger.Clicked += (s, e) => {
@@ -67,71 +76,60 @@ namespace SmartBandAlertV6.Views
             };
 
 
-
-
-
-            /////Here we goooooooooooooooooooooooooooooooo
-            this.BleAdapter = CrossBleAdapter.Current;
-
-
-
-            this.connect = this.BleAdapter
-                .WhenDeviceStatusChanged()
-                .Subscribe(x =>
-                {
-                    var vm = this.Devices.FirstOrDefault(dev => dev.Uuid.Equals(x.Uuid));
-                    if (vm != null)
-                        vm.IsConnected = x.Status == ConnectionStatus.Connected;
-                });
-
-            //this.AppState.WhenBackgrounding().Subscribe(_ => this.scan?.Dispose());
-            this.BleAdapter.WhenScanningStatusChanged().Subscribe(on =>
-            {
-                this.IsScanning = on;
-                this.ScanText.Text = on ? "Stop Scan" : "Scan";
-            });
-            this.Devices = new ObservableCollection<ScanResultViewModel>();
-
-
-
-
-
         }
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
 
-            this.BleAdapter.WhenStatusChanged().Subscribe(x => Device.BeginInvokeOnMainThread(() =>
+            if(bleACRProfileManager.bleprofile.BleAdapter.Status == AdapterStatus.PoweredOn)
             {
-                this.IsSupported = x == AdapterStatus.PoweredOn;
-                this.Title = $"BLE Scanner ({x})";
-            }
-            ));
 
+                if (bleACRProfileManager.bleprofile.Devices.Count ==0)
+                {
+                    bleACRProfileManager.intit();
+                }else
+                {
+                    this.theBTunits.ItemsSource = bleACRProfileManager.bleprofile.Devices;
+                }
+
+
+                bleACRProfileManager.bleprofile.BleAdapter.WhenScanningStatusChanged().Subscribe(on =>
+                {
+                    this.IsScanning = on;
+                    this.ScanText.Text = on ? "Stop Scan" : "Scan";
+                });
+            }else
+                await DisplayAlert("Error: Bluetooth is off?", "Turn on the Bluetooth?", "OK");
         }
 
-        public void Button_OnClickedScanToggle(object sender, EventArgs e)
+        public async void Button_OnClickedScanToggle(object sender, EventArgs e)
         {
-            if (this.IsScanning)
+            if (bleACRProfileManager.bleprofile.BleAdapter.Status == AdapterStatus.PoweredOn)
             {
-                this.scan?.Dispose();
+                if (this.IsScanning)
+                {
+                    this.scan?.Dispose();
+                }
+                else
+                {
+                    bleACRProfileManager.bleprofile.Devices.Clear();
+                    this.ScanText.Text = "Stop Scan";
+
+                    this.scan = bleACRProfileManager.bleprofile.BleAdapter
+                        .Scan()
+                        .Subscribe(this.OnScanResult);
+                }
             }
             else
-            {
-                this.Devices.Clear();
-                this.ScanText.Text = "Stop Scan";
+                await DisplayAlert("Error: Bluetooth is off?", "Turn on the Bluetooth?", "OK");
 
-                this.scan = this.BleAdapter
-                    .Scan()
-                    .Subscribe(this.OnScanResult);
-            }
         }
 
         void OnScanResult(IScanResult result)
         {
             Device.BeginInvokeOnMainThread(() =>
             {
-                var dev = this.Devices.FirstOrDefault(x => x.Uuid.Equals(result.Device.Uuid));
+                var dev = bleACRProfileManager.bleprofile.Devices.FirstOrDefault(x => x.Uuid.Equals(result.Device.Uuid));
                 if (dev != null && !String.IsNullOrEmpty(dev.Name))
                 {
                     dev.TrySet(result);
@@ -141,50 +139,39 @@ namespace SmartBandAlertV6.Views
                     dev = new ScanResultViewModel();
                     dev.TrySet(result);
                     if(!String.IsNullOrEmpty(dev.Name))
-                    this.Devices.Add(dev);
+                        bleACRProfileManager.bleprofile.Devices.Add(dev);
                 }
             });
-            this.theBTunits.ItemsSource = Devices;
+            this.theBTunits.ItemsSource = bleACRProfileManager.bleprofile.Devices;
 
         }
-
+        private bool dotwice = false;
         async void Button_OnClickedBatteriUppdat(Object obj, EventArgs e)
         {
-            try
+            if (App.isConnectedBLE)
             {
-                byte[] toBytes = Encoding.UTF8.GetBytes("11");
-                CharacteristicWrite.WriteWithoutResponse(toBytes);
-
-
-                /*
-                while (String.IsNullOrEmpty(Value))
+                try
                 {
-                    if (!String.IsNullOrEmpty(Value))
+                    byte[] toBytes = Encoding.UTF8.GetBytes("11");
+                     bleACRProfileManager.bleprofile.CharacteristicWrite.WriteWithoutResponse(toBytes);
+                    if(!dotwice)
                     {
-                        int nr = int.Parse(Value);
-                        if (nr > 105)
-                            await DisplayAlert("Charging:", " The Battery is on Charge", "OK");
-                        else
-                        {
-                            double result = (((double)nr / 105) * 100);
-                            progBar.BindingContext = new { w4 = App.ScreenWidth * 160 / (App.ScreenDPI * 3), theprog = (result / 100) };
-                            progBarText.BindingContext = new { theprogtext = result.ToString("#") + "%" };
-                        }
+                        bleACRProfileManager.bleprofile.CharacteristicWrite.WriteWithoutResponse(toBytes);
+                        dotwice = true;
                     }
-
-                    
                 }
-                Value = null;*/
-
-
+                catch (Exception ex)
+                {
+                    UserDialogs.Instance.Alert(ex.ToString());
+                }
             }
-            catch (Exception ex)
-            {
-                UserDialogs.Instance.Alert(ex.ToString());
-            }
+            else
+                await DisplayAlert("Error:", "Connect to a device first", "OK");
+
         }
 
         IDevice device;
+
         async void connectBClicked(object sender, EventArgs e)
         {
             bool answer;
@@ -194,7 +181,7 @@ namespace SmartBandAlertV6.Views
             ScanResultViewModel item = button.BindingContext as ScanResultViewModel;
             device = item.Device;
 
-            cleanEverything();
+            bleACRProfileManager.cleanEverything(device);
             try
             {
                 // don't cleanup connection - force user to d/c
@@ -208,8 +195,30 @@ namespace SmartBandAlertV6.Views
                             using (UserDialogs.Instance.Loading("Connecting", cancelSrc.Cancel, "Cancel"))
                             {
                                 await this.device.Connect().ToTask(cancelSrc.Token);
+                                App.isConnectedBLE = true;
                             }
                         }
+
+                        this.device.WhenAnyCharacteristicDiscovered().Subscribe(characteristic =>
+                        {
+
+                            if (characteristic.Uuid.Equals(Guid.Parse("6e400003-b5a3-f393-e0a9-e50e24dcca9e")))
+                            {
+                                bleACRProfileManager.bleprofile.CharacteristicRead = characteristic;
+                                // once you have your characteristic instance from the service discovery
+                                // this will enable the subscriptions to notifications as well as actually hook to the event
+                                subNoTIFY = bleACRProfileManager.bleprofile.CharacteristicRead.SubscribeToNotifications().Subscribe(result =>
+                                { result.Characteristic.SubscribeToNotifications().Subscribe(x => this.SetReadValue(x, true)); });
+
+                            }
+                            if (characteristic.Uuid.Equals(Guid.Parse("6e400002-b5a3-f393-e0a9-e50e24dcca9e")))
+                            {
+                                bleACRProfileManager.bleprofile.CharacteristicWrite = characteristic;
+                            }
+
+
+                        });
+
                     }
 
                 }
@@ -219,6 +228,7 @@ namespace SmartBandAlertV6.Views
                     if (answer == true)
                     {
                         this.device.CancelConnection();
+                        App.isConnectedBLE = false;
                     }
                 }
             }
@@ -227,93 +237,12 @@ namespace SmartBandAlertV6.Views
                 UserDialogs.Instance.Alert(ex.ToString());
             }
             //Devices.FirstOrDefault(d => d.Device.Uuid == device.Uuid).UpdateD();
-            this.theBTunits.ItemsSource = Devices;
+            this.theBTunits.ItemsSource = bleACRProfileManager.bleprofile.Devices;
             
 
         }
 
-
-        readonly IList<IDisposable> cleanup = new List<IDisposable>();
-        public ConnectionStatus Status { get; private set; } = ConnectionStatus.Disconnected;
-        // public ObservableCollection<Group<GattCharacteristicViewModel>> GattCharacteristics { get; } = 
-        //                                                   new ObservableCollection<Group<GattCharacteristicViewModel>>();
-        public IGattCharacteristic CharacteristicRead { get; set; }
-        public IGattCharacteristic CharacteristicWrite { get; set; }
-
-        public int Rssi { get; private set; }
-        private void cleanEverything()
-        {
-            /* this.cleanup.Add(this.device
-                    .WhenNameUpdated()
-                    .Subscribe(x => this.Name = this.device.Name)
-            );*/
-
-            this.cleanup.Add(this.device
-                .WhenStatusChanged()
-                .Subscribe(x => Device.BeginInvokeOnMainThread(() =>
-                {
-                    this.Status = x;
-
-                    switch (x)
-                    {
-                        case ConnectionStatus.Disconnecting:
-                        case ConnectionStatus.Connecting:
-                            this.ConnectText = x.ToString();
-                            break;
-
-                        case ConnectionStatus.Disconnected:
-                            this.ConnectText = "Connect";
-                            Devices.FirstOrDefault(d => d.Device.Uuid == device.Uuid).IsConnected = false;
-                            Devices.FirstOrDefault(d => d.Device.Uuid == device.Uuid).UpdateD();
-                            //this.GattCharacteristics.Clear();
-                            //this.GattDescriptors.Clear();
-                            this.Rssi = 0;
-                            break;
-
-                        case ConnectionStatus.Connected:
-                            this.ConnectText = "Disconnect";
-                            Devices.FirstOrDefault(d => d.Device.Uuid == device.Uuid).IsConnected = true;
-                            Devices.FirstOrDefault(d => d.Device.Uuid == device.Uuid).UpdateD();
-                            //this.cleanup.Add(this.device
-                            //    .WhenRssiUpdated()
-                            //    .Subscribe(rssi => this.Rssi = rssi)
-                            //);
-                            break;
-                    }
-                }))
-            );
-
-            this.cleanup.Add(this.device
-                .WhenMtuChanged()
-                .Skip(1)
-                .Subscribe(x => UserDialogs.Instance.Alert($"MTU Changed size to {x}"))
-            );
-
-            this.cleanup.Add(
-            this.device.WhenAnyCharacteristicDiscovered().Subscribe(characteristic => {
-
-                if (characteristic.Uuid.Equals(Guid.Parse("6e400003-b5a3-f393-e0a9-e50e24dcca9e")))
-                {
-                    CharacteristicRead = characteristic;
-                    // once you have your characteristic instance from the service discovery
-                    // this will enable the subscriptions to notifications as well as actually hook to the event
-                    var sub = CharacteristicRead.SubscribeToNotifications().Subscribe(result => 
-                                      { result.Characteristic.SubscribeToNotifications().Subscribe(x => this.SetReadValue(x, true)); });
-
-                }
-                if (characteristic.Uuid.Equals(Guid.Parse("6e400002-b5a3-f393-e0a9-e50e24dcca9e")))
-                {
-                    CharacteristicWrite= characteristic;
-                }
-
-
-            })
-            );
-
-        }
-
         public string Value { get; set; }
-
 
         void SetReadValue(CharacteristicResult result, bool fromUtf8)
         {

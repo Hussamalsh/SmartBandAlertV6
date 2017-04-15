@@ -4,7 +4,7 @@
              x:Class="SmartBandAlertV6.Views.HemPage"
              
              xmlns:controls="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin.Abstractions"
-             Title="Hemsida"
+             Title="Hem"
              BackgroundColor="#FFFFFF"
              
              >

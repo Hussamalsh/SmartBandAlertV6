@@ -46,6 +46,7 @@ namespace SmartBandAlertV6
         public static VictimManager VictimManager { get; private set; }
 
         public static BLEProfileManager BLEProfileManager { get; private set; }
+        public static BLEAcrProfileManager BLEAcrProfileManager { get; private set; }
 
         public static IAuthenticate Authenticator { get; private set; } //initialize the interface with a platform-specific implementation
 
@@ -62,8 +63,8 @@ namespace SmartBandAlertV6
             FriendsManager = new FriendsManager(new RestService());
             VictimManager = new VictimManager(new RestService());
 
-             BLEProfileManager = new BLEProfileManager();  //NEW ADDED
-
+            BLEProfileManager = new BLEProfileManager();  //NEW ADDED
+            BLEAcrProfileManager = new BLEAcrProfileManager();
 
             IProfileManager profileManager = new ProfileManager();
             _profileManager = profileManager;

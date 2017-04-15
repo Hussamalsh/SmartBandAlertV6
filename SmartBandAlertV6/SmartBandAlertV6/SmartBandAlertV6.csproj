@@ -38,6 +38,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Data\BLEAcrProfileManager.cs" />
     <Compile Include="Data\BLEProfileManager.cs" />
     <Compile Include="Data\FriendsManager.cs" />
     <Compile Include="Data\IAuthenticate.cs" />
