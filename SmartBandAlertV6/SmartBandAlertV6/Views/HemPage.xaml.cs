@@ -6,6 +6,7 @@ using SmartBandAlertV6.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
@@ -35,7 +36,7 @@ namespace SmartBandAlertV6.Views
 
 
         public BLEAcrProfileManager bleACRProfileManager;
-
+        public bool dangerModeOn = false;
         public HemPage()
         {
             
@@ -60,21 +61,20 @@ namespace SmartBandAlertV6.Views
 
                 if (App.isConnectedBLE)
                 {
-                    subNoTIFY.Dispose();
+                    //subNoTIFY.Dispose();
+                    dangerModeOn = true;
                     var message = new StartLongRunningTaskMessage();
                     MessagingCenter.Send(message, "StartLongRunningTaskMessage");
                 }
                 else
                     await DisplayAlert("Wrong ", "Conect to a device first", "Ok");
-
-
             };
 
             stopDanger.Clicked += (s, e) => {
+                dangerModeOn = false;
                 var message = new StopLongRunningTaskMessage();
                 MessagingCenter.Send(message, "StopLongRunningTaskMessage");
             };
-
 
         }
         protected override async void OnAppearing()
@@ -87,12 +87,21 @@ namespace SmartBandAlertV6.Views
                 if (bleACRProfileManager.bleprofile.Devices.Count ==0)
                 {
                     bleACRProfileManager.intit();
-                }else
+                    IDevice dev = CrossBleAdapter.Current.GetConnectedDevices().FirstOrDefault();
+                    if(dev!= null)
+                    {
+                        bleACRProfileManager.bleprofile.Devices.Add(new ScanResultViewModel());
+                        bleACRProfileManager.bleprofile.Devices.FirstOrDefault().TrySetCustom(dev);
+                        this.theBTunits.ItemsSource = bleACRProfileManager.bleprofile.Devices;
+
+                    }
+                }
+                else
                 {
                     this.theBTunits.ItemsSource = bleACRProfileManager.bleprofile.Devices;
                 }
 
-
+                //111
                 bleACRProfileManager.bleprofile.BleAdapter.WhenScanningStatusChanged().Subscribe(on =>
                 {
                     this.IsScanning = on;
@@ -268,26 +277,56 @@ namespace SmartBandAlertV6.Views
                     }
 
 
-                    if (!Value.Equals(tempval))
+                    if (!Value.Equals(tempval) && result.Data.Length<5)
                     {
                         if(!tempval.Equals("emp"))
-                        this.Value = tempval;
-                        int nr = int.Parse(Value);
-                        if (nr > 107)
-                            await DisplayAlert("Charging:", " The Battery is on Charge", "OK");
-                        else
+                            this.Value = tempval;
+                            int nr = int.Parse(Value);
+                            if (nr > 107)
+                                await DisplayAlert("Charging:", " The Battery is on Charge", "OK");
+                            else
+                            {
+                                double resultlvl = (((double)nr / 107) * 100);
+                                progBar.BindingContext = new { w4 = App.ScreenWidth * 160 / (App.ScreenDPI * 3), theprog = (resultlvl / 100) };
+                                progBarText.BindingContext = new { theprogtext = resultlvl.ToString("#") + "%" };
+                            }
+                        }else if(dangerModeOn && result.Data.Length > 5)
                         {
-                            double resultlvl = (((double)nr / 107) * 100);
-                            progBar.BindingContext = new { w4 = App.ScreenWidth * 160 / (App.ScreenDPI * 3), theprog = (resultlvl / 100) };
-                            progBarText.BindingContext = new { theprogtext = resultlvl.ToString("#") + "%" };
+                            postAlarm();
                         }
-                    }
 
-                }
+                        
+
+
+
+                    }
                 //this.Value = fromUtf8 ? Encoding.UTF8.GetString(result.Data, 0, result.Data.Length) : BitConverter.ToString(result.Data);
 
             });
         }
+        public bool postonce = false;
+        public void postAlarm()
+        {
+            if(!postonce)
+            {
+                Debug.WriteLine("Doooooooooo Pooooooooooooost");
+
+                Device.StartTimer(TimeSpan.FromSeconds(5), () =>
+                {
+                    // Do something
+                    postonce = false;
+                    return false; // True = Repeat again, False = Stop the timer
+                });
+                postonce = true;
+            }
+        }
+
+        public void starttime() {
+
+           
+
+        }
+
 
     }
 }

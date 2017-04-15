@@ -75,7 +75,52 @@ namespace SmartBandAlertV6.Models
             return response;
         }
 
+        public bool TrySetCustom(IDevice result)
+        {
+            var response = false;
+            IsConnected = true;
+            if (this.Uuid == Guid.Empty)
+            {
+                this.Device = result;
+                this.Uuid = this.Device.Uuid;
+                //this.nameOb = result
+                //    .Device
+                //    .WhenNameUpdated()
+                //    .Subscribe(x => this.Name = x);
 
+                response = true;
+            }
+
+            try
+            {
+                if (this.Uuid == result.Uuid)
+                {
+                    response = true;
+
+                    this.Name = Device.Name;
+                    this.Rssi = Rssi;
+
+                    /*var ad = result.AdvertisementData;
+                    this.ServiceCount = ad.ServiceUuids?.Length ?? 0;
+                    this.IsConnectable = ad.IsConnectable;
+                    this.LocalName = ad.LocalName;
+                    this.TxPower = ad.TxPower;
+                    this.ManufacturerData = ad.ManufacturerData == null
+                        ? null
+                        : BitConverter.ToString(ad.ManufacturerData);*/
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+            }
+
+            OnPropertyChanged(nameof(IsConnected));
+            OnPropertyChanged(nameof(ButtonName));
+
+
+            return response;
+        }
 
 
         public event PropertyChangedEventHandler PropertyChanged;
