@@ -79,7 +79,7 @@ namespace SmartBandAlertV6.Droid
                 App.IsLoggedIn = true;
 
 
-            //UserDialogs.Init(this);
+            UserDialogs.Init(this);
 
             Microsoft.WindowsAzure.MobileServices.CurrentPlatform.Init();
             Xamarin.FormsMaps.Init(this, savedInstanceState);

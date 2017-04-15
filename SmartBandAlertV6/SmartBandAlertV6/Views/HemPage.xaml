@@ -21,7 +21,7 @@
             <Button BackgroundColor="{Binding bgc3}" x:Name="checkBattery" Text="Uppdatera" Clicked="Button_OnClickedBatteriUppdat"></Button>
         </StackLayout>
         <Label Text="Smartband Enheten:" TextColor="Black" VerticalTextAlignment="Center" FontSize="Large"></Label>
-        <ListView x:Name="theBTunits" CachingStrategy="RecycleElement" RowHeight="55" >
+        <ListView x:Name="theBTunits" CachingStrategy="RecycleElement" RowHeight="55" ItemsSource="{Binding Devices}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
@@ -40,13 +40,13 @@
                             </controls:CircleImage>
                             <StackLayout HorizontalOptions="Center" Orientation="Vertical" >
                                 <Label Text="{Binding Name}" FontSize="18" VerticalOptions="Start" HorizontalOptions="Start"/>
-                                <Label Text="{Binding Description}" FontSize="12" VerticalOptions="StartAndExpand" HorizontalOptions="Start"/>
+                                <Label Text="{Binding Rssi, StringFormat='RSSI: {0}'}" FontSize="12" VerticalOptions="StartAndExpand" HorizontalOptions="Start"/>
                             </StackLayout>
 
                             <Label  Text="Device Connected" IsVisible="{Binding IsConnected}" BackgroundColor="Yellow" TextColor="Black"  
                                     HorizontalTextAlignment="Center" HeightRequest="0.1"/>
                             <Button BackgroundColor="#000000" TextColor="#FFFFFF" x:Name="connectButton" Text="{Binding ButtonName}" 
-                                    Clicked="connectClicked" VerticalOptions="Center"
+                                    Clicked="connectBClicked" VerticalOptions="Center"
                                     HorizontalOptions="EndAndExpand" ></Button>
                             <!-- 
                             <Button BackgroundColor="#000000" TextColor="#FFFFFF" x:Name="disconnectButton" Text="Avslut" Clicked="disconnectClicked" VerticalOptions="Center"
