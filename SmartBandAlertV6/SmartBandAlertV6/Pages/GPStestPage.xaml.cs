@@ -29,12 +29,31 @@ namespace SmartBandAlertV6.Pages
         async void Button_OnClicked(object sender, EventArgs e)
         {
 
-            var locator = CrossGeolocator.Current;
-
-            locator.DesiredAccuracy = 50;
-
+            
             labelGPS.Text = "Getting gps";
 
+            await getLocationAsync();
+
+        }
+
+        IProfileManager _profileManager;
+        IProfileManager profileManager = new ProfileManager();
+        Profile _profile;
+        void LoadProfile()
+        {
+            _profile = _profileManager.LoadProfile();
+        }
+
+        async void ButtonAlarm_OnClicked(object sender, EventArgs e)
+        {
+            await App.VictimManager.SaveTaskAsync(victim, true);
+        }
+
+
+        public async Task getLocationAsync()
+        {
+            var locator = CrossGeolocator.Current;
+            locator.DesiredAccuracy = 50;
 
 
             var position = await locator.GetPositionAsync(timeoutMilliseconds: 10000);
@@ -51,11 +70,11 @@ namespace SmartBandAlertV6.Pages
 
             }
 
-            labelGPS.Text = string.Format("Time: {0} \nLat: {1} \nLong: {2} \n Altitude: {3} \nAltitude Accuracy: {4} \nAccuracy: {5} \n Heading: {6} \n Speed: {7}",
+             labelGPS.Text = string.Format("Time: {0} \nLat: {1} \nLong: {2} \n Altitude: {3} \nAltitude Accuracy: {4} \nAccuracy: {5} \n Heading: {6} \n Speed: {7}",
 
-        position.Timestamp, position.Latitude, position.Longitude,
+                position.Timestamp, position.Latitude, position.Longitude,
 
-        position.Altitude, position.AltitudeAccuracy, position.Accuracy, position.Heading, position.Speed);
+                position.Altitude, position.AltitudeAccuracy, position.Accuracy, position.Heading, position.Speed);
 
             Geocoder geoCoder = new Geocoder();
             var fortMasonPosition = new Position(position.Latitude, position.Longitude);
@@ -76,29 +95,9 @@ namespace SmartBandAlertV6.Pages
             victim.UserName = _profile.FBusername;
 
             victim.StartDate = DateTime.Parse(position.Timestamp.ToString("yyyy-MM-dd HH:mm:ss"));
-            victim.Latitude = "" + position.Latitude.ToString().Replace(",",".");
+            victim.Latitude = "" + position.Latitude.ToString().Replace(",", ".");
             victim.Longitude = "" + position.Longitude.ToString().ToString().Replace(",", ".");
             victim.Adress = "" + possibleAddresses.FirstOrDefault();
-
-
-        }
-
-        IProfileManager _profileManager;
-        IProfileManager profileManager = new ProfileManager();
-        Profile _profile;
-        void LoadProfile()
-        {
-            _profile = _profileManager.LoadProfile();
-
-        }
-
-        async void ButtonAlarm_OnClicked(object sender, EventArgs e)
-        {
-
-
-            await App.VictimManager.SaveTaskAsync(victim, true);
-
-
 
         }
 

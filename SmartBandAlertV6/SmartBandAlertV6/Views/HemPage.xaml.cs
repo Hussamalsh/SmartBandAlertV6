@@ -1,5 +1,6 @@
 ﻿using Acr.UserDialogs;
 using Plugin.BluetoothLE;
+using Plugin.Geolocator;
 using SmartBandAlertV6.Data;
 using SmartBandAlertV6.Messages;
 using SmartBandAlertV6.Models;
@@ -15,6 +16,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
+using Xamarin.Forms.Maps;
 using Xamarin.Forms.Xaml;
 
 namespace SmartBandAlertV6.Views
@@ -91,9 +93,9 @@ namespace SmartBandAlertV6.Views
                     if(dev!= null)
                     {
                         bleACRProfileManager.bleprofile.Devices.Add(new ScanResultViewModel());
-                        bleACRProfileManager.bleprofile.Devices.FirstOrDefault().TrySetCustom(dev);
+                        device = bleACRProfileManager.bleprofile.Devices.FirstOrDefault().TrySetCustom(dev);
                         this.theBTunits.ItemsSource = bleACRProfileManager.bleprofile.Devices;
-
+                        efterConnection();
                     }
                 }
                 else
@@ -162,6 +164,7 @@ namespace SmartBandAlertV6.Views
                 try
                 {
                     byte[] toBytes = Encoding.UTF8.GetBytes("11");
+                    Value = "newsendrequest";
                      bleACRProfileManager.bleprofile.CharacteristicWrite.WriteWithoutResponse(toBytes);
                     if(!dotwice)
                     {
@@ -179,7 +182,7 @@ namespace SmartBandAlertV6.Views
 
         }
 
-        IDevice device;
+        public IDevice device;
 
         async void connectBClicked(object sender, EventArgs e)
         {
@@ -204,29 +207,12 @@ namespace SmartBandAlertV6.Views
                             using (UserDialogs.Instance.Loading("Connecting", cancelSrc.Cancel, "Cancel"))
                             {
                                 await this.device.Connect().ToTask(cancelSrc.Token);
-                                App.isConnectedBLE = true;
                             }
+
+                            efterConnection();
                         }
 
-                        this.device.WhenAnyCharacteristicDiscovered().Subscribe(characteristic =>
-                        {
 
-                            if (characteristic.Uuid.Equals(Guid.Parse("6e400003-b5a3-f393-e0a9-e50e24dcca9e")))
-                            {
-                                bleACRProfileManager.bleprofile.CharacteristicRead = characteristic;
-                                // once you have your characteristic instance from the service discovery
-                                // this will enable the subscriptions to notifications as well as actually hook to the event
-                                subNoTIFY = bleACRProfileManager.bleprofile.CharacteristicRead.SubscribeToNotifications().Subscribe(result =>
-                                { result.Characteristic.SubscribeToNotifications().Subscribe(x => this.SetReadValue(x, true)); });
-
-                            }
-                            if (characteristic.Uuid.Equals(Guid.Parse("6e400002-b5a3-f393-e0a9-e50e24dcca9e")))
-                            {
-                                bleACRProfileManager.bleprofile.CharacteristicWrite = characteristic;
-                            }
-
-
-                        });
 
                     }
 
@@ -249,6 +235,32 @@ namespace SmartBandAlertV6.Views
             this.theBTunits.ItemsSource = bleACRProfileManager.bleprofile.Devices;
             
 
+        }
+
+        public void efterConnection()
+        {
+
+            App.isConnectedBLE = true;
+
+            this.device.WhenAnyCharacteristicDiscovered().Subscribe(characteristic =>
+            {
+
+                if (characteristic.Uuid.Equals(Guid.Parse("6e400003-b5a3-f393-e0a9-e50e24dcca9e")))
+                {
+                    bleACRProfileManager.bleprofile.CharacteristicRead = characteristic;
+                    // once you have your characteristic instance from the service discovery
+                    // this will enable the subscriptions to notifications as well as actually hook to the event
+                    subNoTIFY = bleACRProfileManager.bleprofile.CharacteristicRead.SubscribeToNotifications().Subscribe(result =>
+                    { result.Characteristic.SubscribeToNotifications().Subscribe(x => this.SetReadValue(x, true)); });
+
+                }
+                if (characteristic.Uuid.Equals(Guid.Parse("6e400002-b5a3-f393-e0a9-e50e24dcca9e")))
+                {
+                    bleACRProfileManager.bleprofile.CharacteristicWrite = characteristic;
+                }
+
+
+            });
         }
 
         public string Value { get; set; }
@@ -309,7 +321,7 @@ namespace SmartBandAlertV6.Views
         {
             if(!postonce)
             {
-                Debug.WriteLine("Doooooooooo Pooooooooooooost");
+                SendAlarm();
 
                 Device.StartTimer(TimeSpan.FromSeconds(5), () =>
                 {
@@ -317,13 +329,62 @@ namespace SmartBandAlertV6.Views
                     postonce = false;
                     return false; // True = Repeat again, False = Stop the timer
                 });
+
                 postonce = true;
             }
         }
 
-        public void starttime() {
+        public async void SendAlarm() {
 
-           
+            Debug.WriteLine("Doooooooooo Pooooooooooooost");
+
+            await getLocationAsync();
+
+
+        }
+
+
+        public Victim victim;
+        public async Task getLocationAsync()
+        {
+            victim = new Victim();
+            var locator = CrossGeolocator.Current;
+            locator.DesiredAccuracy = 50;
+
+            var position = await locator.GetPositionAsync(timeoutMilliseconds: 10000);
+
+            if (position == null)
+
+            {
+                return;
+            }
+
+            //labelGPS.Text = string.Format("Time: {0} \nLat: {1} \nLong: {2} \n Altitude: {3} \nAltitude Accuracy: {4} \nAccuracy: {5} \n Heading: {6} \n Speed: {7}",
+
+            //  position.Timestamp, position.Latitude, position.Longitude,
+
+            //  position.Altitude, position.AltitudeAccuracy, position.Accuracy, position.Heading, position.Speed);
+
+            Geocoder geoCoder = new Geocoder();
+            var fortMasonPosition = new Position(position.Latitude, position.Longitude);
+            var possibleAddresses = await geoCoder.GetAddressesForPositionAsync(fortMasonPosition);
+            //foreach (var a in possibleAddresses)
+            //{
+            //  labelCity.Text += a + "\n";
+            // }
+            //labelCity.Text = possibleAddresses.FirstOrDefault();
+
+            victim.FBID = App.FacebookId;
+            victim.UserName = App.FacebookName;
+
+            victim.StartDate = DateTime.Parse(position.Timestamp.ToString("yyyy-MM-dd HH:mm:ss"));
+            victim.Latitude = "" + position.Latitude.ToString().Replace(",", ".");
+            victim.Longitude = "" + position.Longitude.ToString().ToString().Replace(",", ".");
+            victim.Adress = "" + possibleAddresses.FirstOrDefault();
+
+
+
+            await App.VictimManager.SaveTaskAsync(victim, true);
 
         }
 

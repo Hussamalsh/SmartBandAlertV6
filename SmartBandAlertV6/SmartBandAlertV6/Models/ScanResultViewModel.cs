@@ -75,7 +75,7 @@ namespace SmartBandAlertV6.Models
             return response;
         }
 
-        public bool TrySetCustom(IDevice result)
+        public IDevice TrySetCustom(IDevice result)
         {
             var response = false;
             IsConnected = true;
@@ -119,7 +119,7 @@ namespace SmartBandAlertV6.Models
             OnPropertyChanged(nameof(ButtonName));
 
 
-            return response;
+            return Device;
         }
 
 

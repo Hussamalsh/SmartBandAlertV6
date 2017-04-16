@@ -50,12 +50,12 @@ namespace SmartBandAlertV6.Pages
                 }
             }
         }
-
+        Victim v = new Victim();
         public async void getVictim(string victimId)
         {
-
             var v1 = App.VictimManager.SearchVictimAsync(victimId);
-            Victim v = v1.Result;
+             v = v1.Result;
+            inputEntry.Text = v.Latitude.ToString().Replace(",", ".") + "," + v.Longitude.ToString().Replace(",", ".");
 
             if (!string.IsNullOrWhiteSpace(inputEntry.Text))
             {
@@ -68,7 +68,8 @@ namespace SmartBandAlertV6.Pages
                         break;
                     case TargetPlatform.Android:
                         Device.OpenUri(
-                            new Uri(string.Format("geo:0,0?q={0}", WebUtility.UrlEncode(v.Latitude + "," + v.Longitude))));
+                            new Uri(string.Format("geo:0,0?q={0}", WebUtility.UrlEncode(v.Latitude.ToString().Replace(",", ".") 
+                                                                                            + "," + v.Longitude.ToString().Replace(",", ".")))));
                         break;
                     case TargetPlatform.Windows:
                     case TargetPlatform.WinPhone:
